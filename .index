@@ -1,4 +1,5 @@
 README.md
+AGENTS.md
 host-doctor/README.md
 security/gpg-gopass.md
 security/registrations.md
@@ -11,5 +12,4 @@ security/yubikey-fundamentals.md
 
 host-doctor
 security
-AGENTS.md
 20261122174059.todo.md
