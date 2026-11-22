@@ -1,5 +1,5 @@
 ---
-title: "Chatbook"
+title: README.md
 description: "Index of the public conversational knowledge base"
 type: note
 tags: [chatbook, index]
