@@ -1,27 +1,32 @@
+---
+title: "Chatbook"
+description: "Index of the public conversational knowledge base"
+type: note
+tags: [chatbook, index]
+created: 2026-11-22
+updated: 2026-11-22
+---
+
 # Chatbook
 
-A public notebook maintained from conversations. Its purpose is to preserve useful technical discoveries, decisions, and current work so a discussion can resume without reconstructing its history.
+A **public, human-friendly shared knowledge base** maintained from conversations. It preserves useful discoveries, decisions, open questions, and the next steps needed to resume work. This is a reference notebook, not a transcript archive or a source-code repository.
 
-**Last reviewed:** 2026-11-22  
-**Scope of this section:** Host Doctor and the related YubiKey/authentication discussions.
+**AI contributors:** Read [AGENTS.md](AGENTS.md) first. It is the single top-level set of publishing and editing rules.
 
-## Start here
+## Browse by subject
 
-- [Current state and where to resume](STATUS.md) — short, actionable handoff.
-- [Working agreements](WORKFLOW.md) — how we inspect, change, test, and publish.
-- [Host Doctor](host-doctor/README.md) — local health checking and USB presence detection.
-- [YubiKey fundamentals](security/yubikey-fundamentals.md) — OTP, FIDO2, discoverability, and hardware state.
-- [Registration inventory](security/registrations.md) — what is enrolled and what still needs verification.
-- [sudo and PAM](security/sudo-pam.md) — decisions, prior experiment, and staged checklist.
-- [SSH](security/ssh.md) — hardware-backed SSH alternatives and unresolved design.
-- [GPG and gopass](security/gpg-gopass.md) — existing key material and migration safeguards.
-- [Passwordless web applications](security/web-sso.md) — Pocket ID and downstream services.
-- [Authentication in scripts](security/script-auth.md) — experimental command gating.
+- [Host Doctor](host-doctor/README.md) — local health checks and USB presence detection.
+- [YubiKey fundamentals](security/yubikey-fundamentals.md) — OTP, FIDO2, credential discoverability, and hardware effects.
+- [Registration inventory](security/registrations.md) — reported enrollment, verification gaps, and recordkeeping.
+- [sudo and PAM](security/sudo-pam.md) — touch-only sudo design, evidence, and safeguards.
+- [sudo task checklist](security/sudo-pam.todo.md) — the current, resumable implementation checklist.
+- [Hardware-backed SSH](security/ssh.md) — design alternatives and next decisions.
+- [GPG and gopass](security/gpg-gopass.md) — existing keys and recovery requirements.
+- [Passwordless web applications](security/web-sso.md) — Pocket ID and downstream integration.
+- [Script authentication](security/script-auth.md) — the experimental challenge-response idea.
 
-## How to read this notebook
+## How to use these notes
 
-Entries deliberately distinguish **Verified**, **Reported**, **Decided**, **Proposed**, and **Pending**. A command appearing here is not proof that it has been run. Check the date and state before relying on operational status.
+Read the relevant topic page and its task list (if present). Entries distinguish **Verified, Reported, Decided, Proposed, Pending,** and **Unknown**. Dates are snapshots, not live system monitoring.
 
-This is a **public** reference, not a credential vault or full host inventory. It intentionally omits secrets, private-network details, sensitive authentication material, and exact private device identifiers. Machine-specific state must be checked on the actual host.
-
-The notebook is organized by topic, not by chat transcript. When new facts supersede old ones, update the relevant page and its status rather than adding a duplicate session recap.
+**Privacy:** This is public. It intentionally excludes secrets, sensitive host configurations, private-network addressing, and exact private hardware identifiers. The complete operational inventory stays outside Chatbook.

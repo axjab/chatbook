@@ -1,3 +1,12 @@
+---
+title: "Hardware-backed SSH"
+description: "YubiKey-backed SSH options and unresolved decisions"
+type: note
+tags: [security, ssh, yubikey]
+created: 2026-11-22
+updated: 2026-11-22
+---
+
 # Hardware-backed SSH — design pending
 
 **Goal:** Authenticate to trusted Linux hosts through possession of a physical YubiKey, preferably with a deliberate touch. Existing SSH access must remain usable while testing.

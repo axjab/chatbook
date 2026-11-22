@@ -1,3 +1,12 @@
+---
+title: "YubiKey sudo and PAM"
+description: "Touch-only sudo design and incremental implementation"
+type: note
+tags: [security, linux, pam, sudo]
+created: 2026-11-22
+updated: 2026-11-22
+---
+
 # Passwordless sudo with YubiKey and PAM
 
 **Status:** In progress; no production sudo PAM change confirmed.
@@ -44,24 +53,9 @@ ykman fido credentials list
 
 Do **not** proceed to Spare or edit PAM until the result has been reviewed.
 
-## Checklist
+## Implementation checklist
 
-- [x] Install pam-u2f registration and PAM tooling (reported).
-- [x] Select root-controlled mapping location.
-- [x] Decide on touch-only sudo authentication.
-- [x] Decide to use discoverable credentials.
-- [x] Understand the earlier non-discoverable registration.
-- [ ] Register a discoverable credential on **Main**.
-- [ ] Inspect and verify Main's new record.
-- [ ] Register a discoverable credential on **Spare**.
-- [ ] Inspect and verify Spare's new record.
-- [ ] Preserve both mappings and create the central authorization file with secure ownership.
-- [ ] Inspect effective **/etc/pam.d/sudo**, **sudo-i**, and applicable shared PAM files on the actual host.
-- [ ] Test FIDO/PAM authentication in isolation.
-- [ ] Apply a narrowly scoped sudo configuration.
-- [ ] Prove successful passwordless sudo separately with Main and Spare.
-- [ ] Negative tests: absent/wrong key, failed touch, and recovery.
-- [ ] Document and verify a manual repeatable setup for other hosts.
+See the dedicated [sudo task list](sudo-pam.todo.md) for the step-by-step checklist and where to resume.
 
 ## Safety notes
 

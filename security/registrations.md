@@ -1,3 +1,12 @@
+---
+title: "YubiKey registrations"
+description: "Current enrollment reports and verification gaps"
+type: note
+tags: [security, yubikey, inventory]
+created: 2026-11-22
+updated: 2026-11-22
+---
+
 # YubiKey registrations and inventory
 
 There are **two physical keys**, labeled **Main** and **Spare**. Each has a separate manually maintained record of its device identity and usage in a **non-public remote inventory**. Do not copy serials, live OTPs, credential IDs, or sensitive account details into this public page.

@@ -1,3 +1,12 @@
+---
+title: "YubiKey fundamentals"
+description: "OTP, FIDO2 credential types, and key operations"
+type: note
+tags: [security, yubikey, fido2]
+created: 2026-11-22
+updated: 2026-11-22
+---
+
 # YubiKey fundamentals and discoveries
 
 ## One physical key, several independent applications

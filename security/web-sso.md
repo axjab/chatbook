@@ -1,3 +1,12 @@
+---
+title: "Passwordless web authentication"
+description: "Pocket ID passkeys and downstream OIDC integration"
+type: note
+tags: [security, pocket-id, sso]
+created: 2026-11-22
+updated: 2026-11-22
+---
+
 # Passwordless self-hosted web authentication
 
 **Goal:** Sign into self-hosted web services with YubiKey-backed passkeys, avoiding routine passwords.

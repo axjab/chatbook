@@ -1,3 +1,12 @@
+---
+title: "GPG and gopass"
+description: "OpenPGP hardware security and key recovery planning"
+type: note
+tags: [security, gpg, gopass]
+created: 2026-11-22
+updated: 2026-11-22
+---
+
 # GnuPG, OpenPGP, and gopass — design pending
 
 **Goal:** Use physical YubiKeys for relevant GPG operations while preserving access to existing secrets managed through gopass.

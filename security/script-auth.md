@@ -1,3 +1,12 @@
+---
+title: "Script authentication"
+description: "Experimental cryptographic authentication for local scripts"
+type: note
+tags: [security, scripts, yubikey]
+created: 2026-11-22
+updated: 2026-11-22
+---
+
 # Authentication for arbitrary scripts — experimental
 
 **Goal:** Require an actual YubiKey authentication operation before executing a chosen script or command.
