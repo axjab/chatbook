@@ -1,5 +1,5 @@
 ---
-title: "AGENTS.md"
+title: AGENTS.md
 description: "Owner-approved rules for reading and publishing in this public notebook"
 type: note
 tags: [chatbook, ai, governance]
