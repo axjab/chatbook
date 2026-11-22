@@ -1,1 +1,11 @@
 README.md
+host-doctor/README.md
+security/gpg-gopass.md
+security/registrations.md
+security/script-auth.md
+security/ssh.md
+security/sudo-pam.md
+security/web-sso.md
+security/yubikey-fundamentals.md
+STATUS.md
+WORKFLOW.md
