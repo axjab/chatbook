@@ -9,7 +9,7 @@ updated: 2026-11-23
 
 # YubiKey-backed sudo — task checklist and handoff
 
-**Last reviewed:** 2026-11-23 from conversation evidence. **Status:** Main's touch-only sudo works (owner reported); no exhaustive negative-test output recorded. Spare intentionally deferred until Main is tested. Choose one RP ID **per host** (decision A), not a shared fleet-wide RP.
+**Last reviewed:** 2026-11-23 from conversation evidence. **Owner decision: sudo work is complete; move on.** The early-touch issue is documented as a known minor defect, not a blocker. **Status:** Main's touch-only sudo works (owner reported); no exhaustive negative-test output recorded. Spare intentionally deferred until Main is tested. Choose one RP ID **per host** (decision A), not a shared fleet-wide RP.
 
 ## Completed or decided
 
@@ -52,6 +52,8 @@ updated: 2026-11-23
 - Recovery through GRUB is a last resort, not a substitute for independent access and tested backups.
 
 ## Conditional insertion gate (2026-11-23)
+
+**Reported after real-hardware use:** the insertion gate works. A known issue occurs if the sensor is held while inserting the key: first authentication may fail and the password prompt may join the touch line. The owner explicitly accepted this for now and declared the sudo task complete. The script artifact has an explanatory comment; no production fix was requested.
 
 - [x] Prototype complete: POSIX shell, bounded 3-second default insertion wait, 250 ms polls, yellow single-line prompt, terminal clearing, and fallback exit status.
 - [x] Eight mocked/pseudo-terminal scenarios passed: inserted, mid-wait insertion, timeout, removed while waiting, missing USB tool, invalid TTY, countdown and invalid timeout. Shell syntax passed `sh -n`.
