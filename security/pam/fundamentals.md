@@ -1,5 +1,5 @@
 ---
-title: "Linux PAM fundamentals and experiments"
+title: Linux PAM fundamentals and experiments
 description: "How PAM services, modules, control flow, prompts and isolated tests work"
 type: note
 tags: [security, linux, pam, learning]

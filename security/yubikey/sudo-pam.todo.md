@@ -1,5 +1,5 @@
 ---
-title: "sudo integration tasks"
+title: sudo integration tasks
 description: "Verified versus reported progress, outstanding tests, and next-session handoff"
 type: todo
 tags: [security, sudo, pam, tasks]

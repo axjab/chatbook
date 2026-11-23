@@ -1,5 +1,5 @@
 ---
-title: "YubiKey registrations"
+title: YubiKey registrations
 description: "Public summary of enrollment reports, tests and remaining verification"
 type: note
 tags: [security, yubikey, inventory]

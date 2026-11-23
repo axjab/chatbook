@@ -1,10 +1,10 @@
 ---
-title: "Passwordless web authentication"
+title: Passwordless web authentication
 description: "Pocket ID passkeys and downstream OIDC integration"
 type: note
 tags: [security, pocket-id, sso]
 created: 2026-11-22
-updated: 2026-11-22
+updated: 2026-11-23
 ---
 
 # Passwordless self-hosted web authentication

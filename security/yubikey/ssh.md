@@ -1,10 +1,10 @@
 ---
-title: "Hardware-backed SSH"
+title: Hardware-backed SSH
 description: "YubiKey-backed SSH options and unresolved decisions"
 type: note
 tags: [security, ssh, yubikey]
 created: 2026-11-22
-updated: 2026-11-22
+updated: 2026-11-23
 ---
 
 # Hardware-backed SSH — design pending

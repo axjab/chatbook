@@ -4,7 +4,7 @@ description: "Owner-approved rules for reading and publishing in this public not
 type: note
 tags: [chatbook, ai, governance]
 created: 2026-11-22
-updated: 2026-11-22
+updated: 2026-11-23
 ---
 
 # Chatbook — instructions for AI contributors
@@ -72,7 +72,7 @@ Put YAML frontmatter at the beginning of each Markdown file, enclosed by `---` d
 
 ```yaml
 ---
-title: "Human-readable title"
+title: Human-readable title
 description: "One-sentence purpose"
 type: note
 tags: [relevant, topics]
@@ -82,6 +82,10 @@ updated: 2026-11-22
 ```
 
 Use `type: note`, `type: todo`, or `type: bookmark` as appropriate. Update the `updated` date when editing content; preserve the original `created` date. Do not invent older dates. For `.html` files, put equivalent metadata in an opening HTML comment so raw HTML renders cleanly; a native Markdown frontmatter parser may not read that comment.
+
+### 8. Frontmatter titles must not be quoted
+
+The YAML frontmatter `title` value must **never be wrapped in double or single quotes**. Use a plain, unquoted scalar, for example `title: Linux PAM fundamentals`. Choose titles that are valid as unquoted YAML values; avoid characters or syntax requiring quoting.
 
 ## Previously agreed publishing practices
 

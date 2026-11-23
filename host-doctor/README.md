@@ -1,10 +1,10 @@
 ---
-title: "Host Doctor"
+title: Host Doctor
 description: "Host health inspections and YubiKey USB presence checking"
 type: note
 tags: [host-doctor, linux, diagnostics]
 created: 2026-11-22
-updated: 2026-11-22
+updated: 2026-11-23
 ---
 
 # Host Doctor
