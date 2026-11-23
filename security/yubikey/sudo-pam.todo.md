@@ -53,16 +53,27 @@ updated: 2026-11-23
 
 ## Conditional insertion gate (2026-11-23)
 
-**Reported after real-hardware use:** the insertion gate works. A known issue occurs if the sensor is held while inserting the key: first authentication may fail and the password prompt may join the touch line. The owner explicitly accepted this for now and declared the sudo task complete. The script artifact has an explanatory comment; no production fix was requested.
+**Reported after real-hardware use:** the original insertion gate works. A known issue occurs if the sensor is held while inserting the key: first authentication may fail and the password prompt may join the touch line. The owner accepted this and previously declared the baseline sudo task complete. The later bounded-retry enhancement below is a separate, not-yet-deployed prototype.
 
 - [x] Prototype complete: POSIX shell, bounded 3-second default insertion wait, 250 ms polls, yellow single-line prompt, terminal clearing, and fallback exit status.
 - [x] Eight mocked/pseudo-terminal scenarios passed: inserted, mid-wait insertion, timeout, removed while waiting, missing USB tool, invalid TTY, countdown and invalid timeout. Shell syntax passed `sh -n`.
 - [x] Verify Linux-PAM `[success=ignore default=1]` skip semantics, `pam_exec` error mapping, and documented `lsusb -d 1050:` nonmatch exit.
-- [ ] **NOT DEPLOYED:** Inspect current host sudo service and included stacks; check a known-good independent recovery path; back up target PAM files before installation.
+- [ ] **Before deploying any enhancement:** Inspect the actual working host sudo service and includes; preserve a known-good independent recovery path; back up the exact PAM files to be changed.
 - [ ] Test script with real YubiKey Main and Spare/unknown USB devices; validate `PAM_TTY`, actual `pam_exec` UID, terminal permissions and output in sudo.
 - [ ] Validate PAM in a separate test service first, then sudo: no-key timeout/password fallback, correct key touch, wrong/unenrolled key fallback, failed program execution, and no authentication bypass.
 - [ ] Test sudo-i and noninteractive sessions; confirm prompt cleanup and Ctrl+C/touch-wait behavior. A preflight script does not impose a timeout on `pam_u2f`.
 - [ ] Record exact deployed configuration and observed test outcomes; preserve original `common-auth` and password recovery.
+
+## Optional enhancement — retry after unsuccessful FIDO (2026-11-23)
+
+- [x] Updated POSIX shell script with `retry` mode: `KEY NOT VERIFIED`, wait for removal and reinsertion, then `TOUCH THE KEY`; bounded waits default to three seconds.
+- [x] Added `rejected` mode: clear the prior touch line and print `KEY NOT VERIFIED` with a newline before password fallback.
+- [x] Verified 14 shell/pseudo-terminal cases using mocked USB status, including successful simulated replacement, removal/insertion timeouts, and missing terminal; syntax passed `sh -n`.
+- [x] Verified 7 branch scenarios using Linux-PAM's real control interpreter via a **temporary, isolated PAM service**; simulated `pam_permit` and `pam_deny` stand in for FIDO and fallback. A display-only `[default=ignore]` rule never supplies authentication.
+- [ ] **NOT DEPLOYED:** Keep the owner's working two-rule gate unchanged until an independent root recovery session and rollback are ready.
+- [ ] Inspect and test an optional two-attempt PAM fragment; `default=4` on the first gate skips all retry modules if no key, `default=1` on the second gate skips only its FIDO module on timeout.
+- [ ] Test incorrect/unenrolled key then correct key, missed touch, absent key, fallback, timeout, sudo-i, and no-auth-bypass with actual hardware on Debian 13.
+- [ ] Distinguish generic authentication rejection from a proven wrong key. USB vendor detection cannot determine which credential the key holds.
 
 ## Outstanding in recommended order
 
