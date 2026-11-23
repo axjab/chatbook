@@ -51,6 +51,17 @@ updated: 2026-11-23
 - Keep a securely stored, tested emergency root password while pursuing passwordless **daily** authentication; avoid turning the recovery route into another untested FIDO-only dependency.
 - Recovery through GRUB is a last resort, not a substitute for independent access and tested backups.
 
+## Conditional insertion gate (2026-11-23)
+
+- [x] Prototype complete: POSIX shell, bounded 3-second default insertion wait, 250 ms polls, yellow single-line prompt, terminal clearing, and fallback exit status.
+- [x] Eight mocked/pseudo-terminal scenarios passed: inserted, mid-wait insertion, timeout, removed while waiting, missing USB tool, invalid TTY, countdown and invalid timeout. Shell syntax passed `sh -n`.
+- [x] Verify Linux-PAM `[success=ignore default=1]` skip semantics, `pam_exec` error mapping, and documented `lsusb -d 1050:` nonmatch exit.
+- [ ] **NOT DEPLOYED:** Inspect current host sudo service and included stacks; check a known-good independent recovery path; back up target PAM files before installation.
+- [ ] Test script with real YubiKey Main and Spare/unknown USB devices; validate `PAM_TTY`, actual `pam_exec` UID, terminal permissions and output in sudo.
+- [ ] Validate PAM in a separate test service first, then sudo: no-key timeout/password fallback, correct key touch, wrong/unenrolled key fallback, failed program execution, and no authentication bypass.
+- [ ] Test sudo-i and noninteractive sessions; confirm prompt cleanup and Ctrl+C/touch-wait behavior. A preflight script does not impose a timeout on `pam_u2f`.
+- [ ] Record exact deployed configuration and observed test outcomes; preserve original `common-auth` and password recovery.
+
 ## Outstanding in recommended order
 
 - [ ] **First next-session action:** Read actual current sudo service configuration and review which experimental lines remain; inspect only, do not assume prior proposed examples match live state. Keep a known-good admin route open.
@@ -60,7 +71,7 @@ updated: 2026-11-23
 - [ ] Then register discoverable sudo credential on Spare, inspect listing, append its public mapping safely, and independently test correct/incorrect key behavior.
 - [ ] Confirm final negative cases, document rollback, and write a manually reproducible per-host procedure.
 - [ ] Consider rotating any FIDO PIN disclosed through command-line arguments and avoiding future PINs in shell history.
-- [ ] Optionally evaluate a separate custom insertion-and-cancellation UI only **after** the secure sudo baseline is stable.
+- [ ] Evaluate touch-wait cancellation separately; insertion gate alone cannot cancel a blocked `pam_u2f` attempt.
 
 ## Separate proposed project: responsive YubiKey interaction
 
