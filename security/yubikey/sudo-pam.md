@@ -78,6 +78,31 @@ There is no documented pam_u2f timeout= setting in the consulted manual. The req
 
 Never put FIDO PINs in command-line arguments or publish credential mappings, PINs, IDs or debug output. If a PIN was exposed in an argument or transcript, treat it as exposed, review shell history safely, and rotate it.
 
+## Conditional insertion gate (2026-11-23, not deployed)
+
+**Implemented and simulated locally, not hardware-verified:** A POSIX shell `pam_exec` preflight can check for the Yubico USB vendor (1050) and show one ANSI-colored line. When absent, it immediately displays `INSERT THE KEY [3s]`, polls every 250 ms, updates the countdown in place, and erases it on timeout. On detection, it replaces the line with `TOUCH THE KEY` and returns success. Timeout or an unsupported terminal returns failure, which is supposed to skip the FIDO attempt and continue to the normal password stack.
+
+The script accepts a bounded integer timeout (1–30 seconds) as its first argument, defaulting to three. Dependencies use fixed system paths. The terminal is restricted to actual character devices under `/dev/ttyN` or `/dev/pts/N`; no terminal means fallback rather than an invisible pause. A successfully opened terminal file descriptor receives carriage-return and erase-line sequences. The touch message is written without a newline. Noninteractive and redirected contexts still require host-side testing.
+
+**Recommended two-rule PAM fragment (not yet installed on host):**
+
+~~~text
+auth [success=ignore default=1] pam_exec.so quiet quiet_log /path/to/fido-prompt
+auth sufficient pam_u2f.so authfile=/path/to/root-controlled-mapping
+~~~
+
+Linux-PAM documents that `default=1` skips one following module for authentication; `success=ignore` continues normally. `pam_exec` maps a successful child to PAM_SUCCESS and a failed child to a PAM error. `sufficient` grants success only if preceding required modules have not failed; otherwise it falls through. The parent sudo service **must preserve the existing `common-auth` inclusion after this block**. Inspect the entire live stack before editing; the exact deployed file is not confirmed.
+
+The usbutils `lsusb -d 1050:` filter is independent of USB bus and device numbers and product IDs, and its documented return status is nonzero when no matching device exists. **This detects Yubico hardware, not FIDO capability, valid credentials, the enrolled account, or the correct key.** An unregistered key can therefore trigger `pam_u2f`, which must reject it and let password fallback continue. Do not add `nouserok` or other options allowing missing mappings to authenticate.
+
+**Automated checks run (local mocks and pseudo-terminal):** already present, inserted during countdown, absence timeout, removal during wait, missing `lsusb`, invalid terminal, three-second countdown, and invalid timeout. All eight passed; expected exit statuses and absence of newline in output were asserted. Timeout ends in a carriage return plus erase-line sequence. Shell syntax was checked with `sh -n`. These are simulated results, **not** proof that Debian's live sudo/PAM, permissions, terminal behavior, credential matching, or real hardware authentication works.
+
+**Unverified / operational limits:** `pam_exec` execution identity and `PAM_TTY` value under each sudo invocation; key removal after the gate succeeds; failure/cancellation while `pam_u2f` waits for touch; real password fallback, sudo-i, SSH/noninteractive uses; and display cleanup when authentication completes. The gate controls **insertion waiting only** and cannot time out a subsequent `pam_u2f` touch attempt. The touch prompt may remain visible until later terminal output overwrites it. The gate is not an authorization decision.
+
+The prototype and tests were supplied as downloadable conversation artifacts, **not** committed as standalone code in Chatbook. Before installing: inspect current PAM files, keep an independently functioning root/recovery session, back up only affected files, test an isolated PAM service, then verify fresh sudo authentication with real hardware and password fallback.
+
+References: [Linux-PAM pam_exec](https://man7.org/linux/man-pages/man8/pam_exec.8.html), [PAM control syntax](https://man7.org/linux/man-pages/man5/pam.d.5.html), [usbutils lsusb](https://man7.org/linux/man-pages/man8/lsusb.8.html), [Yubico pam_u2f](https://developers.yubico.com/pam-u2f/Manuals/pam_u2f.8.html).
+
 ## Recovery and references
 
 Maintain a known-good administrative login while changing PAM. Rollback should remove **only** the newly added sudo PAM line, using the preserved access; keep common-auth unchanged. Never deploy experimental pam_debug success, alwaysok or nouserok into a privileged authentication path.
