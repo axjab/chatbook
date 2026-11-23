@@ -1,10 +1,10 @@
 ---
-title: "GPG and gopass"
+title: GPG and gopass
 description: "OpenPGP hardware security and key recovery planning"
 type: note
 tags: [security, gpg, gopass]
 created: 2026-11-22
-updated: 2026-11-22
+updated: 2026-11-23
 ---
 
 # GnuPG, OpenPGP, and gopass — design pending

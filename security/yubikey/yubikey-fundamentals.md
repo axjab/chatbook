@@ -1,5 +1,5 @@
 ---
-title: "YubiKey fundamentals"
+title: YubiKey fundamentals
 description: "OTP, FIDO2 credential types, relying-party identity and hardware operations"
 type: note
 tags: [security, yubikey, fido2]

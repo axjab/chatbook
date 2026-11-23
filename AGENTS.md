@@ -72,7 +72,7 @@ Put YAML frontmatter at the beginning of each Markdown file, enclosed by `---` d
 
 ```yaml
 ---
-title: "Human-readable title"
+title: Human-readable title
 description: "One-sentence purpose"
 type: note
 tags: [relevant, topics]

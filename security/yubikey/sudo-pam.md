@@ -1,5 +1,5 @@
 ---
-title: "YubiKey sudo and PAM"
+title: YubiKey sudo and PAM
 description: "Touch-only sudo architecture, observed progress, pitfalls and recovery"
 type: note
 tags: [security, linux, pam, sudo]
