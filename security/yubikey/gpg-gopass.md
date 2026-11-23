@@ -9,7 +9,7 @@ updated: 2026-11-23
 
 # GnuPG, OpenPGP, and gopass — design pending
 
-**Goal:** Use physical YubiKeys for relevant GPG operations while preserving access to existing secrets managed through gopass.
+**Goal (confirmed 2026-11-23):** Decrypt the existing gopass password store and GPG-encrypted files using a YubiKey instead of repeatedly entering the software private-key passphrase, while preserving recovery access. No migration has yet been verified.
 
 ## Starting point
 
@@ -25,6 +25,12 @@ The full fingerprint and private-key state are intentionally omitted here under 
 The YubiKey's **OpenPGP smartcard application** is independent of its **FIDO2/WebAuthn application**. A FIDO passkey cannot be assumed to decrypt gopass data or sign GPG messages.
 
 Placing key material on a card, generating hardware-backed subkeys, and using a GPG agent are different operations with different recovery and portability implications.
+
+## Preferred direction and remaining decisions
+
+Explore the YubiKey **OpenPGP encryption/decipher subkey slot**, not its existing FIDO2 passkeys. GnuPG and gopass can use the hardware-held decryption subkey through `gpg-agent`/smartcard support. This typically exchanges the software key passphrase for the **OpenPGP PIN** (which may be cached) and, where configured and supported, a touch requirement. It is not automatically PIN-free.
+
+Two-key strategies include importing an existing backed-up encryption subkey onto both compatible cards, or using different encryption recipients; the latter can require recipient or encryption changes. Carefully verify hardware model/firmware and RSA3072 support. **Neither strategy has been selected or executed.** Never make a YubiKey the only recoverable copy of a decryption key.
 
 ## No implementation decision yet
 
