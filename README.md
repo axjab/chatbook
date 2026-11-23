@@ -4,7 +4,7 @@ description: "Index of the public conversational knowledge base"
 type: note
 tags: [chatbook, index]
 created: 2026-11-22
-updated: 2026-11-22
+updated: 2026-11-23
 ---
 
 # Chatbook
@@ -18,8 +18,9 @@ A **public, human-friendly shared knowledge base** maintained from conversations
 - [Host Doctor](host-doctor/README.md) — local health checks and USB presence detection.
 - [YubiKey fundamentals](security/yubikey-fundamentals.md) — OTP, FIDO2, credential discoverability, and hardware effects.
 - [Registration inventory](security/registrations.md) — reported enrollment, verification gaps, and recordkeeping.
-- [sudo and PAM](security/sudo-pam.md) — touch-only sudo design, evidence, and safeguards.
-- [sudo task checklist](security/sudo-pam.todo.md) — the current, resumable implementation checklist.
+- [PAM fundamentals and experiments](security/pam-fundamentals.md) — PAM services, auth/account/password/session, module stacking, output, and an isolated lab.
+- [sudo and PAM](security/sudo-pam.md) — touch-only sudo design, evidence, problems, and safeguards.
+- [sudo task checklist and handoff](security/sudo-pam.todo.md) — verified/reported progress and the exact next-session actions.
 - [Hardware-backed SSH](security/ssh.md) — design alternatives and next decisions.
 - [GPG and gopass](security/gpg-gopass.md) — existing keys and recovery requirements.
 - [Passwordless web applications](security/web-sso.md) — Pocket ID and downstream integration.
