@@ -103,6 +103,12 @@ The prototype and tests were supplied as downloadable conversation artifacts, **
 
 References: [Linux-PAM pam_exec](https://man7.org/linux/man-pages/man8/pam_exec.8.html), [PAM control syntax](https://man7.org/linux/man-pages/man5/pam.d.5.html), [usbutils lsusb](https://man7.org/linux/man-pages/man8/lsusb.8.html), [Yubico pam_u2f](https://developers.yubico.com/pam-u2f/Manuals/pam_u2f.8.html).
 
+### Observed early-touch behavior (2026-11-23)
+
+**Reported on actual hardware:** During the three-second insertion countdown, inserting a YubiKey while already pressing its sensor can result in `TOUCH THE KEY[sudo] password for ...` followed by `Sorry, try again.`; the next attempt succeeds. This is consistent with a user-presence touch occurring before the FIDO challenge is ready, but the cause has **not** been established from a trace. The initial touch should not be assumed to satisfy a later FIDO challenge; release the sensor and touch once prompted.
+
+The adjoining sudo password prompt is a separate confirmed terminal-layout defect: the helper prints `TOUCH THE KEY` without a newline, and subsequent sudo output can append to the same line. A PAM-controlled cleanup would need isolated testing; do not claim that adding a fixed delay guarantees recognition of a held touch. No change to the deployed script or PAM stack was made in this documentation update.
+
 ## Recovery and references
 
 Maintain a known-good administrative login while changing PAM. Rollback should remove **only** the newly added sudo PAM line, using the preserved access; keep common-auth unchanged. Never deploy experimental pam_debug success, alwaysok or nouserok into a privileged authentication path.
