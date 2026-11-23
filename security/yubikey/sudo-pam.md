@@ -78,13 +78,13 @@ There is no documented pam_u2f timeout= setting in the consulted manual. The req
 
 Never put FIDO PINs in command-line arguments or publish credential mappings, PINs, IDs or debug output. If a PIN was exposed in an argument or transcript, treat it as exposed, review shell history safely, and rotate it.
 
-## Conditional insertion gate (2026-11-23, not deployed)
+## Conditional insertion gate (2026-11-23)
 
-**Implemented and simulated locally, not hardware-verified:** A POSIX shell `pam_exec` preflight can check for the Yubico USB vendor (1050) and show one ANSI-colored line. When absent, it immediately displays `INSERT THE KEY [3s]`, polls every 250 ms, updates the countdown in place, and erases it on timeout. On detection, it replaces the line with `TOUCH THE KEY` and returns success. Timeout or an unsupported terminal returns failure, which is supposed to skip the FIDO attempt and continue to the normal password stack.
+**Implemented and initially simulated locally; owner subsequently reported the original gate working on real hardware with sudo:** A POSIX shell `pam_exec` preflight can check for the Yubico USB vendor (1050) and show one ANSI-colored line. When absent, it immediately displays `INSERT THE KEY [3s]`, polls every 250 ms, updates the countdown in place, and erases it on timeout. On detection, it replaces the line with `TOUCH THE KEY` and returns success. Timeout or an unsupported terminal returns failure, which is supposed to skip the FIDO attempt and continue to the normal password stack.
 
 The script accepts a bounded integer timeout (1–30 seconds) as its first argument, defaulting to three. Dependencies use fixed system paths. The terminal is restricted to actual character devices under `/dev/ttyN` or `/dev/pts/N`; no terminal means fallback rather than an invisible pause. A successfully opened terminal file descriptor receives carriage-return and erase-line sequences. The touch message is written without a newline. Noninteractive and redirected contexts still require host-side testing.
 
-**Recommended two-rule PAM fragment (not yet installed on host):**
+**Original two-rule PAM design (illustrative only; exact deployed stack not independently inspected):**
 
 ~~~text
 auth [success=ignore default=1] pam_exec.so quiet quiet_log /path/to/fido-prompt
@@ -108,6 +108,32 @@ References: [Linux-PAM pam_exec](https://man7.org/linux/man-pages/man8/pam_exec.
 **Reported on actual hardware:** During the three-second insertion countdown, inserting a YubiKey while already pressing its sensor can result in `TOUCH THE KEY[sudo] password for ...` followed by `Sorry, try again.`; the next attempt succeeds. This is consistent with a user-presence touch occurring before the FIDO challenge is ready, but the cause has **not** been established from a trace. The initial touch should not be assumed to satisfy a later FIDO challenge; release the sensor and touch once prompted.
 
 The adjoining sudo password prompt is a separate confirmed terminal-layout defect: the helper prints `TOUCH THE KEY` without a newline, and subsequent sudo output can append to the same line. A PAM-controlled cleanup would need isolated testing; do not claim that adding a fixed delay guarantees recognition of a held touch. No change to the deployed script or PAM stack was made in this documentation update.
+
+### Optional bounded retry after a failed FIDO attempt (2026-11-23)
+
+**Implemented as a revised conversation artifact and tested with mocks; not installed or tested with real YubiKeys.** The owner asked whether an incorrect key could be handled instead of immediately proceeding to the password prompt. The new design permits **one additional FIDO attempt**, then preserves the original password fallback.
+
+On the first `pam_u2f` failure, `fido-prompt retry` shows `KEY NOT VERIFIED` briefly, requests `REMOVE THE KEY [3s]` if Yubico USB hardware is still present, then `INSERT THE KEY [3s]`. On reinsertion, it displays `TOUCH THE KEY` and PAM runs `pam_u2f` a second time. Failure to remove or reinsert the key within the bounded wait skips the second FIDO attempt; a final display-only `rejected` mode clears the previous line, prints `KEY NOT VERIFIED` with a newline, and proceeds to the existing password stack. This relies on observing Yubico USB vendor presence, so multiple simultaneously connected Yubico devices are a limitation.
+
+**Important:** The original `lsusb -d 1050:` check cannot tell whether the key is enrolled. A `pam_u2f` failure does **not** uniquely distinguish an unregistered key from missed/early touch, unavailable credential mapping, device errors or a refused challenge. The generic `KEY NOT VERIFIED` wording is deliberate. A shell preflight is not a FIDO authorization check and cannot interrupt `pam_u2f` while it awaits a touch.
+
+**Proposed authentication fragment (illustrative only, not live configuration):**
+
+~~~text
+auth [success=ignore default=4] pam_exec.so quiet quiet_log /path/to/fido-prompt
+auth sufficient pam_u2f.so authfile=/path/to/root-controlled-mapping
+auth [success=ignore default=1] pam_exec.so quiet quiet_log /path/to/fido-prompt retry
+auth sufficient pam_u2f.so authfile=/path/to/root-controlled-mapping
+auth [default=ignore] pam_exec.so quiet quiet_log /path/to/fido-prompt rejected
+~~~
+
+The first `default=4` skips four following rules on absent key or preflight error, so neither FIDO attempt nor notification runs. The second `default=1` skips the second `pam_u2f` when the retry gate fails. A successful `pam_u2f` with `sufficient` can finish authentication. The notification must use `[default=ignore]` — **never** `optional` or `sufficient` — so printing an error can never count as authentication. The invoking sudo service must retain its independently working password `common-auth` stack; do not change a shared PAM file or remove recovery access.
+
+**Verified in the isolated test environment:** `sh -n` succeeded; 14 terminal/shell tests with mocked USB presence and pseudo-terminals passed; seven additional cases used the real Linux-PAM control interpreter (`pam_start_confdir`) in a temporary service with `pam_permit`/`pam_deny` substituted for FIDO and fallback authentication. The cases exercised no-key skip, first-pass success, simulated first-pass rejection followed by second-pass success, both attempts failing, retry timeout, and fail-closed behavior without a successful fallback. None are real-hardware or live sudo authentication tests.
+
+**Remaining:** Verify actual `pam_u2f` failure path with an unregistered or incorrect YubiKey, correct key replacement, early touch, and actual password fallback; inspect actual current sudo PAM configuration and preserve a root recovery session before any installation. The known-good current gate remains in place until a consciously tested change is installed.
+
+References: [PAM control syntax](https://man7.org/linux/man-pages/man5/pam.d.5.html), [pam_exec](https://man7.org/linux/man-pages/man8/pam_exec.8.html), and [Yubico pam_u2f](https://developers.yubico.com/pam-u2f/Manuals/pam_u2f.8.html).
 
 ## Recovery and references
 
