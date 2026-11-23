@@ -9,7 +9,7 @@ updated: 2026-11-23
 
 # YubiKey-backed sudo — task checklist and handoff
 
-**Last reviewed:** 2026-11-23 from conversation evidence. **Owner decision: sudo work is complete; move on.** The early-touch issue is documented as a known minor defect, not a blocker. **Status:** Main's touch-only sudo works (owner reported); no exhaustive negative-test output recorded. Spare intentionally deferred until Main is tested. Choose one RP ID **per host** (decision A), not a shared fleet-wide RP.
+**Last reviewed:** 2026-11-23 from conversation evidence. **Status:** Original sudo gate works on real hardware (owner reported); the new rejection/SIGINT enhancement is implemented and simulated but **not deployed**. The early-touch issue remains known; no exhaustive negative-test output recorded. Spare intentionally deferred until Main is tested. Choose one RP ID **per host** (decision A), not a shared fleet-wide RP.
 
 ## Completed or decided
 
@@ -53,7 +53,7 @@ updated: 2026-11-23
 
 ## Conditional insertion gate (2026-11-23)
 
-**Reported after real-hardware use:** the original insertion gate works. A known issue occurs if the sensor is held while inserting the key: first authentication may fail and the password prompt may join the touch line. The owner accepted this and previously declared the baseline sudo task complete. The later bounded-retry enhancement below is a separate, not-yet-deployed prototype.
+**Reported after real-hardware use:** the original insertion gate works. A known issue occurs if the sensor is held while inserting the key: first authentication may fail and the password prompt may join the touch line. The owner accepted this as a minor baseline defect. The former bounded-retry enhancement was later rejected; the current proposal below is simpler.
 
 - [x] Prototype complete: POSIX shell, bounded 3-second default insertion wait, 250 ms polls, yellow single-line prompt, terminal clearing, and fallback exit status.
 - [x] Eight mocked/pseudo-terminal scenarios passed: inserted, mid-wait insertion, timeout, removed while waiting, missing USB tool, invalid TTY, countdown and invalid timeout. Shell syntax passed `sh -n`.
@@ -64,16 +64,19 @@ updated: 2026-11-23
 - [ ] Test sudo-i and noninteractive sessions; confirm prompt cleanup and Ctrl+C/touch-wait behavior. A preflight script does not impose a timeout on `pam_u2f`.
 - [ ] Record exact deployed configuration and observed test outcomes; preserve original `common-auth` and password recovery.
 
-## Optional enhancement — retry after unsuccessful FIDO (2026-11-23)
+## Current change — rejection notice and Ctrl+C during insertion (2026-11-23)
 
-- [x] Updated POSIX shell script with `retry` mode: `KEY NOT VERIFIED`, wait for removal and reinsertion, then `TOUCH THE KEY`; bounded waits default to three seconds.
-- [x] Added `rejected` mode: clear the prior touch line and print `KEY NOT VERIFIED` with a newline before password fallback.
-- [x] Verified 14 shell/pseudo-terminal cases using mocked USB status, including successful simulated replacement, removal/insertion timeouts, and missing terminal; syntax passed `sh -n`.
-- [x] Verified 7 branch scenarios using Linux-PAM's real control interpreter via a **temporary, isolated PAM service**; simulated `pam_permit` and `pam_deny` stand in for FIDO and fallback. A display-only `[default=ignore]` rule never supplies authentication.
-- [ ] **NOT DEPLOYED:** Keep the owner's working two-rule gate unchanged until an independent root recovery session and rollback are ready.
-- [ ] Inspect and test an optional two-attempt PAM fragment; `default=4` on the first gate skips all retry modules if no key, `default=1` on the second gate skips only its FIDO module on timeout.
-- [ ] Test incorrect/unenrolled key then correct key, missed touch, absent key, fallback, timeout, sudo-i, and no-auth-bypass with actual hardware on Debian 13.
-- [ ] Distinguish generic authentication rejection from a proven wrong key. USB vendor detection cannot determine which credential the key holds.
+**Decided:** One FIDO attempt only. On verifier failure display `WRONG KEY` in red and go straight to password. No removal/reinsertion prompts. Ctrl+C during insertion clears the line and should skip the FIDO attempt. The old retry design is explicitly superseded.
+
+- [x] Implement `wrong` display-only mode: red `WRONG KEY` (`#EF4444`), newline before password; do not authenticate from display output.
+- [x] Remove the optional second FIDO attempt and all `REMOVE THE KEY` prompts.
+- [x] Trap SIGINT during the shell gate, clear prompt, and exit `130`; also handle termination/hangup as error paths.
+- [x] Update proposed PAM to three lines: `[success=ignore default=2]` gate; `sufficient pam_u2f`; `[default=ignore]` rejection notice.
+- [x] Run 13 local shell/pseudo-terminal checks (`sh -n` included), eight isolated Linux-PAM control-flow tests using mocked verifier and fallback, and a separate controlling-PTY literal Ctrl+C test; all passed.
+- [ ] **NOT INSTALLED on the owner host:** Inspect exact current sudo and fido PAM configuration. Back up files and keep independent root recovery before making any changes.
+- [ ] Test real unregistered key, recognized key, failed touch, password fallback, Ctrl+C during insertion and safe recovery on Debian 13.
+- [ ] Test Ctrl+C separately during `pam_u2f` touch wait: the gate script is no longer running and cannot guarantee the desired fallback. This may cancel the sudo operation.
+- [ ] Record the actual deployed state once verified. Do not assert that `WRONG KEY` proves an unregistered key: it is a generic message for any FIDO failure.
 
 ## Outstanding in recommended order
 
@@ -85,17 +88,6 @@ updated: 2026-11-23
 - [ ] Confirm final negative cases, document rollback, and write a manually reproducible per-host procedure.
 - [ ] Consider rotating any FIDO PIN disclosed through command-line arguments and avoiding future PINs in shell history.
 - [ ] Evaluate touch-wait cancellation separately; insertion gate alone cannot cancel a blocked `pam_u2f` attempt.
-
-## Separate proposed project: responsive YubiKey interaction
-
-**Not approved for deployment.** Requested behavior:
-
-- Correct registered key already inserted: immediately ask for touch.
-- Correct key absent or wrong key present: ask for insertion, wait for hotplug, then request touch.
-- Permit reliable cancellation during *both* insertion wait and touch wait; enforce a bounded timeout.
-- Cancel/failure must not grant access; preserve recovery and password policy.
-
-Built-in pam_u2f does **not** combine these behaviors: cue handles touch, interactive prompts unconditionally, and nodetect skips detection. A preflight wrapper is insufficient to guarantee interruption of a blocked pam_u2f call. Explore an isolated PAM-aware test harness or module/library changes only after threat modeling, research and fail-closed tests. No implementation or production change has happened.
 
 ## Next-session instructions
 
