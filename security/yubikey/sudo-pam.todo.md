@@ -25,6 +25,32 @@ updated: 2026-11-23
 - [x] PAM educational lessons captured in [PAM fundamentals](pam-fundamentals.md).
 - [x] Cancellation issue reproduced: Ctrl+C during touch wait did not promptly stop sudo.
 
+## 2026-11-23 PAM lockout and recovery — verified report
+
+- During experiments to extract the sudo FIDO2 rule into a reusable PAM service and customize prompts, both `sudo` and `su` became unusable from the normal user session.
+- User recovered root access by temporarily editing the GRUB Linux command line to boot with `init=/bin/bash`, repaired configuration, and returned to normal boot.
+- **Exact failing rule and root cause were not established.** Do not infer that a particular include, prompt module, or control flag caused the failure without inspecting the saved configurations.
+- The GRUB edit made using `e` is temporary; `init=/bin/bash` must not be persisted. This recovery route depends on bootloader and disk-encryption access.
+- Do not assume the current on-disk PAM configuration matches any earlier suggested example; inspect it first.
+
+### Mandatory safety procedure for authentication changes
+
+1. **Inspect** live PAM stacks, includes, sudoers, fallback paths and the precise command's effects.
+2. **Explain** all persistent changes, hardware effects, PAM control flow and rollback before executing.
+3. **Prepare recovery:** preserve known-good configuration, a working independent root session, and tested rollback instructions. A root password via `su -` is a useful emergency path, but **not independent of PAM** when both share `common-auth`.
+4. **Test in isolation** with a separate PAM service and appropriate test harness (for example `pamtester`); test both success and failure paths.
+5. **Change one production variable at a time**; do not combine refactoring with UI/notification customization.
+6. **Verify immediately** in a separate session: correct key, absent/wrong key, cancellation, timeout, fallback, `sudo-i`, and recovery. Keep the root session open until verification completes.
+7. **Record** exact observed behavior, rollback and final configuration; separate confirmed facts from hypotheses.
+
+### Specific design lessons
+
+- PAM `sufficient`, `required`, `requisite`, and `include`/ `substack` semantics must be checked in the context of the *complete* stack; syntactic validity is not sufficient.
+- Presentation (`pam_echo`, `pam_exec`, `tty-notify`) must never grant access or make authentication depend on successful notification delivery. Verify sudo's PAM message-suppression behavior and execution UID rather than assuming either.
+- Prefer service-specific PAM experiments over changing `common-auth` globally, especially because shared files can affect `su`, login, SSH and unattended services.
+- Keep a securely stored, tested emergency root password while pursuing passwordless **daily** authentication; avoid turning the recovery route into another untested FIDO-only dependency.
+- Recovery through GRUB is a last resort, not a substitute for independent access and tested backups.
+
 ## Outstanding in recommended order
 
 - [ ] **First next-session action:** Read actual current sudo service configuration and review which experimental lines remain; inspect only, do not assume prior proposed examples match live state. Keep a known-good admin route open.
