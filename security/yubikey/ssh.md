@@ -1,31 +1,43 @@
 ---
-title: Hardware-backed SSH
-description: "YubiKey-backed SSH options and unresolved decisions"
+title: SSH over Tailnet and WAN
+description: "Recorded SSH access preference, key-based authentication and optional hardware protection"
 type: note
 tags: [security, ssh, yubikey]
 created: 2026-11-22
 updated: 2026-11-23
 ---
 
-# Hardware-backed SSH — design pending
+# SSH over Tailnet and WAN
 
-**Goal:** Authenticate to trusted Linux hosts through possession of a physical YubiKey, preferably with a deliberate touch. Existing SSH access must remain usable while testing.
+**Owner preference (2026-11-23):** Do not require YubiKeys for ordinary SSH. For WAN-facing OpenSSH, an ordinary asymmetric SSH key pair is acceptable. This is a design choice, **not** evidence that host SSH configuration has been changed or tested.
 
-## Two different approaches
+## Distinguish connectivity from authentication
 
-1. **OpenSSH FIDO security-key authentication** (such as ed25519-sk or ecdsa-sk): an SSH credential is generated for use with a FIDO authenticator. The hardware performs signing. Discoverable credentials are an option, but their behavior and tooling should be verified before enrollment.
-2. **GPG-agent/OpenPGP-backed SSH**: expose an OpenPGP authentication key through gpg-agent's SSH-agent support. This uses a different YubiKey application and key-management workflow.
+- **Tailscale networking** provides a private connectivity fabric; it does not automatically replace ordinary OpenSSH login authentication.
+- **Tailscale SSH**, when specifically enabled and configured with the appropriate tailnet policies, has its own identity and authorization flow.
+- **Ordinary OpenSSH over Tailnet or WAN** still authenticates the remote user using its configured SSH mechanisms.
 
-**No approach has been selected or configured** in the available project record.
+## WAN OpenSSH recommendation
 
-## Decisions and safeguards
+Use an Ed25519 public/private key pair for interactive administration; authorize its public key for the intended remote account. Prefer encrypting the private key with a strong passphrase and caching it in `ssh-agent`. A passphrase on the **local SSH key** is different from a remote Linux password; a remote login can still be passwordless.
 
-- Test Main and Spare independently; credentials do not automatically copy across physical keys.
-- Record which remote account/host trusts which public credential in the private inventory.
-- Keep a recovery login and at least one working SSH session until tests pass.
-- Separate host authorization of a public SSH key from key creation on the local authenticator.
-- Do not confuse Tailscale network access with SSH cryptographic authentication.
+After confirming working access and a tested recovery path, consider disabling SSH password and keyboard-interactive login and direct root login for exposed hosts. Never remove the only working access path before successful testing. Use narrowly scoped separate credentials for unattended automation where applicable.
+
+A hardware-backed OpenSSH `ed25519-sk` identity is **optional**, potentially useful for more sensitive interactive access. Touch requirements can conflict with unattended orchestration. GPG-agent/OpenPGP SSH is another option but is not selected for normal SSH.
+
+## Host account naming
+
+The owner wants **one short lowercase username for the primary human administrator account on owned servers and desktops**. The exact name and per-host account mappings are intentionally kept out of this public repository. Distinct service accounts remain separate. Migration of existing accounts requires an ownership, services, SSH, home-directory and recovery audit.
 
 ## Resume
 
-Inspect current OpenSSH version, existing working identities, and supported FIDO operations. Compare OpenSSH -sk and GPG-agent architectures, then select one before creating credentials or changing authorized keys.
+1. Inventory existing SSH identities, enabled server authentication methods, and Tailscale SSH versus ordinary OpenSSH.
+2. Verify WAN SSH public-key authentication without changing live recovery settings.
+3. Prepare and test rollbacks before turning off any password-based SSH access.
+4. Make the selected primary-account naming consistent only through planned host-by-host migrations.
+
+## References
+
+- [OpenSSH sshd_config manual](https://man.openbsd.org/sshd_config)
+- [OpenSSH ssh-keygen manual](https://man.openbsd.org/ssh-keygen)
+- [Yubico pam-u2f](https://developers.yubico.com/pam-u2f/)
