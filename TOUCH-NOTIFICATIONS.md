@@ -11,9 +11,9 @@ updated: 2026-11-24
 
 **Goal:** Show a visible notification when GPG or FIDO is waiting for a physical YubiKey touch. **One user systemd service** runs the detector and forwards its events; supports desktop notifications and terminal broadcasts.
 
-**Upstream:** [max-baz/yubikey-touch-detector](https://github.com/max-baz/yubikey-touch-detector) (formerly maximbaz). The upstream Go installation command still uses the module path \`github.com/maximbaz/yubikey-touch-detector\`. It detects \`GPG_1\`, \`U2F_1\`, \`MAC_1\` on operation start; suffix \`_0\` means wait ended. GPG touch detection is heuristic because the agent does not expose the card's actual touch state.
+**Upstream:** [max-baz/yubikey-touch-detector](https://github.com/max-baz/yubikey-touch-detector) (formerly maximbaz). The upstream Go installation command still uses the module path `github.com/maximbaz/yubikey-touch-detector`. It detects `GPG_1`, `U2F_1`, `MAC_1` on operation start; suffix `_0` means wait ended. GPG touch detection is heuristic because the agent does not expose the card's actual touch state.
 
-**Observed 2026-11-24:** A **user** service named \`yubikey-touch.service\` ran a custom helper, delivering a real terminal \`GPG_1\` notification while \`gpg --decrypt\` waited for touch; both Main and Spare subsequently decrypted. This page offers a **reproducible generic implementation** of that architecture, not an assertion that the owner's deployed helper exactly matches every line below.
+**Observed 2026-11-24:** A **user** service named `yubikey-touch.service` ran a custom helper, delivering a real terminal `GPG_1` notification while `gpg --decrypt` waited for touch; both Main and Spare subsequently decrypted. This page offers a **reproducible generic implementation** of that architecture, not an assertion that the owner's deployed helper exactly matches every line below.
 
 ## 1. Install detector dependencies and build
 
@@ -26,11 +26,11 @@ GOPATH="$HOME/.go" go install github.com/maximbaz/yubikey-touch-detector@latest
 test -x "$HOME/.go/bin/yubikey-touch-detector"
 ~~~
 
-**Effects:** Installs APT packages; downloads/builds a Go binary at \`~/.go/bin/yubikey-touch-detector\`. No YubiKey credentials or GnuPG secrets are changed. An older apt-provided Go may automatically download a new toolchain, or may require a separate Go upgrade; verify \`go version\` and the build result. Alternatively use an upstream signed release appropriate to the host.
+**Effects:** Installs APT packages; downloads/builds a Go binary at `~/.go/bin/yubikey-touch-detector`. No YubiKey credentials or GnuPG secrets are changed. An older apt-provided Go may automatically download a new toolchain, or may require a separate Go upgrade; verify `go version` and the build result. Alternatively use an upstream signed release appropriate to the host.
 
 ## 2. Install the helper into libexec
 
-First inspect any existing \`/usr/local/libexec/yubikey-touch-daemon\` and \`/etc/systemd/user/yubikey-touch.service\`. **Back up any customized installation before replacing it.** Run the block only when setting up a fresh host or deliberately replacing the prior version.
+First inspect any existing `/usr/local/libexec/yubikey-touch-daemon` and `/etc/systemd/user/yubikey-touch.service`. **Back up any customized installation before replacing it.** Run the block only when setting up a fresh host or deliberately replacing the prior version.
 
 ~~~bash
 sudo install -d -m 0755 /usr/local/libexec /etc/systemd/user
@@ -69,9 +69,9 @@ SH
 sudo chmod 0755 /usr/local/libexec/yubikey-touch-daemon
 ~~~
 
-**Changes:** Root-owned executable \`/usr/local/libexec/yubikey-touch-daemon\`. The optional locally installed \`tty-notify\` produces the enhanced terminal presentation already used by the owner. **No \`tty-notify\` dependency is required** for the generic implementation: it otherwise writes a basic notice to writable PTYs owned by the current user. Desktop notification requires a working user notification service/session.
+**Changes:** Root-owned executable `/usr/local/libexec/yubikey-touch-daemon`. The optional locally installed `tty-notify` produces the enhanced terminal presentation already used by the owner. **No `tty-notify` dependency is required** for the generic implementation: it otherwise writes a basic notice to writable PTYs owned by the current user. Desktop notification requires a working user notification service/session.
 
-**Important previous bug:** If your detector binary lives in \`~/.go/bin\`, do **not** check for bare \`yubikey-touch-detector\` using an unrelated \`PATH\`. This helper checks the executable's **actual absolute location**. Change \`detector=\` if you install it elsewhere.
+**Important previous bug:** If your detector binary lives in `~/.go/bin`, do **not** check for bare `yubikey-touch-detector` using an unrelated `PATH`. This helper checks the executable's **actual absolute location**. Change `detector=` if you install it elsewhere.
 
 ## 3. Install one systemd user unit
 
@@ -95,9 +95,9 @@ systemctl --user enable --now yubikey-touch.service
 systemctl --user status yubikey-touch.service --no-pager
 ~~~
 
-**Changes:** Persistent systemd user unit and enabled-state symlink. Starts the notifier for the current logged-in user; no hardware/PIN/key changes. **Do not run a second detector** simultaneously (including the upstream \`yubikey-touch-detector.service\` or a manual \`-v --notify\` process), because multiple instances can contend for the GPG agent proxy socket.
+**Changes:** Persistent systemd user unit and enabled-state symlink. Starts the notifier for the current logged-in user; no hardware/PIN/key changes. **Do not run a second detector** simultaneously (including the upstream `yubikey-touch-detector.service` or a manual `-v --notify` process), because multiple instances can contend for the GPG agent proxy socket.
 
-A systemd **user** service generally starts during user login; for headless hosts that must run without login, evaluate \`loginctl enable-linger USER\` separately (changes persistent user-manager lifecycle policy). The service uses \`--notify\` for desktop notifications; on headless-only systems, remove that flag and keep \`--stdout\` for terminal messages.
+A systemd **user** service generally starts during user login; for headless hosts that must run without login, evaluate `loginctl enable-linger USER` separately (changes persistent user-manager lifecycle policy). The service uses `--notify` for desktop notifications; on headless-only systems, remove that flag and keep `--stdout` for terminal messages.
 
 ## 4. Verify the actual touch request
 
@@ -115,9 +115,9 @@ Use a pre-created disposable GPG ciphertext encrypted to the card's existing pub
 gpg --decrypt /tmp/yubikey-test.gpg
 ~~~
 
-**Do not touch immediately.** Expect a desktop notice (when available) and a terminal notice (\`Touch requested: GPG_1\`); touch the YubiKey; confirm plaintext. Repeat after the touch cache expires and with the spare. Also test a FIDO PAM touch request separately if enabled.
+**Do not touch immediately.** Expect a desktop notice (when available) and a terminal notice (`Touch requested: GPG_1`); touch the YubiKey; confirm plaintext. Repeat after the touch cache expires and with the spare. Also test a FIDO PAM touch request separately if enabled.
 
-**No notification despite working GPG decryption:** the touch might still be cached; a temporary \`GNUPGHOME\` may use a different \`gpg-agent\` socket from the detector; the user service may have stale GnuPG environment. Use normal \`GNUPGHOME\` and restart **only this user notification service** before deeper diagnosis. The detector proxy is socket-specific; notification absence is **not** proof of software-key decryption.
+**No notification despite working GPG decryption:** the touch might still be cached; a temporary `GNUPGHOME` may use a different `gpg-agent` socket from the detector; the user service may have stale GnuPG environment. Use normal `GNUPGHOME` and restart **only this user notification service** before deeper diagnosis. The detector proxy is socket-specific; notification absence is **not** proof of software-key decryption.
 
 ## 5. Stop / roll back
 
