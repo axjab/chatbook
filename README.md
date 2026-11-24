@@ -13,6 +13,12 @@ A **public, human-friendly shared knowledge base** maintained from conversations
 
 **AI contributors:** Read [AGENTS.md](AGENTS.md) first. It is the single top-level set of publishing and editing rules.
 
+## Quick setup cheatsheets
+
+- [Passwordless sudo — FIDO2](SUDO-FIDO.md) — register Main/Spare, install all four authentication components, add `@include fido`, verify fallback and roll back safely.
+- [Passphraseless GPG and gopass](GPG-YUBIKEY.md) — generate and back up a key once, provision both YubiKeys, then decrypt on any Debian/Ubuntu host with only the public key.
+- [Touch-key notifications](TOUCH-NOTIFICATIONS.md) — deploy one systemd user service for GPG/FIDO touch prompts in desktop and terminal sessions.
+
 ## Browse by subject
 
 - [Host Doctor](host-doctor/README.md) — local health checks and USB presence detection.
@@ -23,8 +29,8 @@ A **public, human-friendly shared knowledge base** maintained from conversations
 - [sudo and PAM](security/yubikey/sudo-pam.md) — touch-only sudo design, evidence, problems, and safeguards.
 - [sudo task checklist and handoff](security/yubikey/sudo-pam.todo.md) — verified/reported progress and the exact next-session actions.
 - [Hardware-backed SSH](security/yubikey/ssh.md) — design alternatives and next decisions.
-- [GPG and gopass](security/yubikey/gpg-gopass.md) — verified card-backed decryption, PIN/touch policy, and remaining store migration and recovery steps.
-- [YubiKey touch notifications](security/yubikey/touch-notifications.md) — observed GPG touch events, terminal notifications, Unix socket command hooks and pending systemd deployment.
+- [GPG and gopass](security/yubikey/gpg-gopass.md) — earlier card-backed decryption milestone and remaining independent backup-restoration checks.
+- [YubiKey touch notifications](security/yubikey/touch-notifications.md) — observed GPG touch events, Unix socket hooks, and initial service deployment research.
 - [Passwordless web applications](security/yubikey/web-sso.md) — Pocket ID and downstream integration.
 - [Script authentication](security/yubikey/script-auth.md) — the experimental challenge-response idea.
 - [Disk encryption and FIDO2](security/yubikey/luks-fido2.md) — LUKS2 enrollment prerequisites and recovery.
