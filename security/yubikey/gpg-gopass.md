@@ -9,7 +9,11 @@ updated: 2026-11-23
 
 # GnuPG, OpenPGP, and gopass — design pending
 
-**Goal (confirmed 2026-11-23):** Decrypt the existing gopass password store and GPG-encrypted files using a YubiKey instead of repeatedly entering the software private-key passphrase, while preserving recovery access. No migration has yet been verified.
+**Goal (confirmed 2026-11-23):** Decrypt the existing gopass password store and GPG-encrypted files using a YubiKey instead of repeatedly entering the software private-key passphrase, while preserving recovery access. No migration has yet been verified. **Postponed by owner on 2026-11-23** until graphical authentication and disk unlock are resolved.
+
+## Session checkpoint
+
+A fresh software GPG key was **proposed** for repeatable hardware provisioning, but its creation, secret-key backup, encrypted test, and YubiKey transfer have **not been confirmed**. Do not assume example commands from chat were executed. Revisit hardware capabilities, independent Main/Spare recovery and the active password-store recipients before generating or migrating keys.
 
 ## Starting point
 
