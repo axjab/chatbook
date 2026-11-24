@@ -9,7 +9,7 @@ updated: 2026-11-23
 
 # YubiKey-backed sudo — task checklist and handoff
 
-**Last reviewed:** 2026-11-23 from conversation evidence. **Status:** Original sudo gate works on real hardware (owner reported); the new rejection/SIGINT enhancement is implemented and simulated but **not deployed**. The early-touch issue remains known; no exhaustive negative-test output recorded. Spare intentionally deferred until Main is tested. Choose one RP ID **per host** (decision A), not a shared fleet-wide RP.
+**Owner update (2026-11-23):** sudo/FIDO is considered **complete by owner report**. This supersedes the earlier pending-deployment status below. The earlier experiments and test checkboxes remain historical evidence, **not** a current instruction to repeat enrollment or redeploy; independent negative-test records and per-device details were not provided. Do not restart production sudo work unless explicitly requested. The active resumption point is [integration checkpoint](integration.todo.md).
 
 ## Completed or decided
 
