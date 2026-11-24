@@ -1,29 +1,57 @@
 ---
-title: Authentication and host identity next tasks
-description: "Upcoming desktop, username, GPG and script authentication work after sudo"
+title: Authentication and host identity checkpoint
+description: "Resumption point for graphical authentication, universal account identity and disk unlock"
 type: todo
-tags: [security, yubikey, ssh, gpg, hosts, tasks]
+tags: [security, yubikey, pam, luks, hosts, tasks]
 created: 2026-11-23
 updated: 2026-11-23
 ---
 
-# Next authentication and identity tasks
+# Authentication checkpoint — 2026-11-23
 
-**Scope:** Follow-up work after the owner reported sudo/FIDO working on 2026-11-23. These are **decisions and requests**, not proof of deployment. The separate [sudo test checklist](sudo-pam.todo.md) and [registration inventory](registrations.md) may still need evidence-based reconciliation.
+**This session is closed.** The owner reported YubiKey-backed sudo complete. Do not infer completion of every negative test from that report. This page is the active resumption point.
 
-## Priorities
+## Decided
 
-- [ ] **Dux/DankMaterialShell graphical sign-in:** Determine the installed Dux version and whether the target is the **greetd login screen**, the **DMS lock screen**, or both. Official Dux documentation supports U2F for each through different PAM policies. Inspect existing greetd, dankshell and dankshell-u2f services first. Test a key-only path with password recovery; do not blindly import the sudo-specific terminal helper.
-- [ ] **Universal human username:** Adopt one short lowercase username for the primary human administrator across owned servers and desktops. The exact chosen name and host mappings are recorded privately, not in this public notebook. Keep service identities separate. Audit processes, ownership, home directories, sudoers and SSH before migrating an existing account.
-- [ ] **Hardware decryption for gopass and encrypted files:** Inspect the existing secret key and hardware OpenPGP capabilities read-only. Test independent encrypted backups and recovery; decide on Main/Spare strategy, PIN/touch behavior and whether an existing encryption subkey can be imported onto both. Only then migrate. See [GPG/gopass](gpg-gopass.md).
-- [ ] **Low-effort FIDO gates for Bash, Python and Go:** Prototype a single reusable key-only authentication interface with PAM or a verified challenge-response CLI; return nonzero on failure/cancellation. Show simple invocations in each language and test honest negative cases. A user-editable script is not itself a security boundary. See [script authentication](script-auth.md).
-- [ ] **Ordinary SSH:** On WAN, deploy tested Ed25519 public-key authentication without requiring YubiKeys, preferably with local private-key passphrase protection. For Tailnet, distinguish Tailscale SSH from ordinary OpenSSH. Keep existing recovery until tested. See [SSH plan](ssh.md).
-- [ ] **Enrollment audit:** Confirm each YubiKey independently for Bitwarden, Tailscale, GitHub and other services; reconcile outdated sudo Main/Spare outcomes without assuming unrecorded tests passed.
+- **One universal human login name:** The owner selected the same established personal handle for systems under personal control and external services. For privacy, this public notebook does **not** reproduce the exact account name or internal per-host mappings. Existing shorter local account names remain until a deliberate migration; do not mass-rename accounts. Service accounts remain separate.
+- **Graphical sign-in:** Enable a YubiKey option for Dux/DankMaterialShell's greetd login while preserving a working password fallback. The user enabled a Dux security-key option but reported that insertion was not recognized; the location of a documented Sync control was unclear.
+- **Sudo:** Owner reports complete. Its custom `fido` stack is built for terminal use; do **not** assume `@include fido` works in a graphical greeter. In particular, its helper requires a tty. Use and validate the greeter's own PAM-compatible `pam_u2f` flow.
+- **Disk encryption:** Investigate unlocking LUKS2 with a YubiKey during early boot, retaining the current passphrase as recovery. Nothing has been enrolled or modified for disk unlock.
+- **GPG/gopass hardware decryption:** Postponed until graphical login and disk-unlock issues are resolved. Do not generate or migrate keys as a continuation of this checkpoint; previous example commands were suggestions, not evidence of execution.
 
-## Immediate read-only inspection
+## Outstanding work in order
 
-For Dux, inspect the installed version and existing PAM services before any changes. For GPG, inspect `gpg --list-secret-keys --keyid-format LONG` and `gpg --card-status` (the latter queries the connected card without changing its credentials). Do not paste private identifiers or encryption secrets into this public notebook.
+- [ ] **Diagnose Dux security-key detection:** Identify Dux/DMS greeter version and actual greeter binary. Inspect the current `/etc/pam.d/greetd` and related Dux PAM service and verify which mapping file the greeter uses. Compare the reported detection failure with the working terminal FIDO path. Determine why the documented Sync control is absent in the installed version. Do not overwrite PAM rules blindly.
+- [ ] **Resolve Dux PAM ownership:** Decide whether Dux manages `/etc/pam.d/greetd` through its greeter sync, or the operating system manages it. Test a real key and password fallback from a recoverable session before relying on graphical login.
+- [ ] **Provide an appropriate Dux setup video** only after verifying that it covers the same greeter version and security-key authentication; do not label an unrelated appearance/setup video as a PAM tutorial.
+- [ ] **Inspect the encrypted root device and initramfs:** Determine LUKS version, mapped block device, actual `/etc/crypttab`, boot initramfs tooling and whether FIDO2 unlocking is supported at boot. Distinguish boot-time unlock from user-session PAM authentication.
+- [ ] **Plan safe LUKS2 enrollment:** Once compatibility and backups are verified, enroll Main and Spare as independent unlock methods; keep an existing verified passphrase/recovery slot; test reboots and removal/failure scenarios before retiring any method.
+- [ ] **Plan username reconciliation:** Inventory home paths, ownership/UIDs, services, sudo policies, user-level configuration and identity-dependent app state privately; migrate host-by-host only with tested recovery.
+- [ ] **Reconcile stale sudo and service registration notes:** Record evidence of actual Main/Spare enrollments and tests, rather than assuming successful deployment equals exhaustive testing.
+- [ ] **Later — GPG:** Return to new-key planning and hardware-held decryption only after higher priorities are resolved. Verify independent recovery copies before `keytocard` or recipient changes.
 
-## Recovery principles
+## Confirmed lessons
 
-No blanket modifications to `common-auth`, no untested greetd changes, no deletion of software GPG secrets, and no replacement of working SSH login before validation. Preserve independent recovery access.
+1. An approved universal account name is a **convention**, not a completed migration. A one-letter user is convenient but looks cryptic; an established personal handle is a better durable identity than a role or project name.
+2. The YubiKey's FIDO2 authenticator is not the same as its OpenPGP or PIV smartcard application. A Dux security-key prompt normally means FIDO/U2F, not smartcard insertion.
+3. A terminal PAM integration does not transfer unchanged to a graphical greeter. PAM service, device access, conversation handling, authorization mapping and fallback all matter.
+4. USB detection proves presence only, not successful enrollment or FIDO authorization. An inserted key can precede a usable HID/FIDO interface.
+5. A documented UI control or command may differ by installed Dux version. Inspect locally before running sync operations that rewrite PAM rules.
+6. Early-boot LUKS unlocking uses a separate key enrollment and boot integration. Existing sudo/greeter registration does not configure encrypted disk unlock.
+7. Preserve independent recovery and make one authentication change at a time. Never remove the remaining working disk passphrase without verified alternate unlock paths.
+
+## Authoritative reference material
+
+- [Dux greeter authentication](https://duxlabs.dev/docs/dms-greeter/authentication) — security key, PAM policy ownership and greeter sync.
+- [Dux greeter project README](https://github.com/duxlabs-dev/dux-greeter) — documents `dms-greeter sync --auth`; command changes PAM when Dux manages authentication.
+- [systemd-cryptenroll](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html) — FIDO2 LUKS2 enrollment, recovery keys and risks.
+- [crypttab](https://www.freedesktop.org/software/systemd/man/latest/crypttab.html) — `fido2-device=` unlock settings.
+- [Disk-encryption research and prerequisites](luks-fido2.md).
+
+## Safe resume point
+
+1. **Read-only greeter inspection:** `cat /etc/pam.d/greetd`, inspect existing Dux-related PAM policies, `fido2-token -L`, `dms-greeter --help`. Examine output before touching login policy.
+2. **Read-only disk inspection:** `lsblk -o NAME,TYPE,FSTYPE,MOUNTPOINTS`, `cat /etc/crypttab`, check actual initramfs packages. Do not run `systemd-cryptenroll --fido2-device=auto` yet.
+3. After diagnosing both, select one controlled, reversible change and validate a full recovery path.
+
+**Safety:** No YubiKey enrollment, key creation, PAM edit, username migration, disk-header change, or boot configuration change was performed by this Chatbook checkpoint.
