@@ -9,7 +9,7 @@ updated: 2026-11-24
 
 # Passphraseless GPG — YubiKey OpenPGP
 
-**Goal:** Decrypt GPG and \`gopass\` secrets using the **private encryption subkey held on a YubiKey**, not a local software private key. The software-key **passphrase** is no longer needed during decryption. A **YubiKey OpenPGP User PIN** can still be required after insertion; physical touch is required when the card's touch cache expires.
+**Goal:** Decrypt GPG and `gopass` secrets using the **private encryption subkey held on a YubiKey**, not a local software private key. The software-key **passphrase** is no longer needed during decryption. A **YubiKey OpenPGP User PIN** can still be required after insertion; physical touch is required when the card's touch cache expires.
 
 **Do the key-generation and card-provisioning section ONCE for an identity.** On every other Debian/Ubuntu host, do only **Host setup** below. Do not generate a new encryption identity independently on every host.
 
@@ -41,7 +41,7 @@ gpg --quick-add-key "$PRIMARY_FPR" cv25519 encr 1y
 gpg --list-secret-keys --keyid-format LONG
 ~~~
 
-**Effects:** Generates private/software keys in this GnuPG home. You should have a primary \`[SC]\` and a \`cv25519\` \`[E]\` subkey. **If an encryption subkey is already present, do not add another blindly.** Review the list and select the correct \`[E]\` subkey in later steps.
+**Effects:** Generates private/software keys in this GnuPG home. You should have a primary `[SC]` and a `cv25519` `[E]` subkey. **If an encryption subkey is already present, do not add another blindly.** Review the list and select the correct `[E]` subkey in later steps.
 
 ### 3. Back up BEFORE using keytocard
 
@@ -75,7 +75,7 @@ While the provisioning GnuPG home still holds the **software** private key:
 gpg --edit-key "$PRIMARY_FPR"
 ~~~
 
-At the interactive \`gpg>\` prompt, select **only the encryption \`[E]\` subkey** (usually \`key 1\`; verify the displayed \`ssb*\`), then:
+At the interactive `gpg>` prompt, select **only the encryption `[E]` subkey** (usually `key 1`; verify the displayed `ssb*`), then:
 
 ~~~text
 key 1
@@ -91,11 +91,11 @@ ykman openpgp keys set-touch dec cached
 ykman openpgp keys info DEC
 ~~~
 
-**Effects:** Persistent decryption touch policy; typically **15-second cached touch**. Verify that the card's \`DEC\` fingerprint matches the intended encryption subkey. Repeat the same process for **Spare**. The two cards will then hold the same private encryption subkey, but each has independent PINs and physical identity.
+**Effects:** Persistent decryption touch policy; typically **15-second cached touch**. Verify that the card's `DEC` fingerprint matches the intended encryption subkey. Repeat the same process for **Spare**. The two cards will then hold the same private encryption subkey, but each has independent PINs and physical identity.
 
-If the software key was deleted before provisioning Spare, restore the **verified secret-key backup** in an **isolated trusted GnuPG home**, confirm \`ssb\` (not only \`ssb>\`), repeat \`keytocard\`, and remove/protect the temporary secret-key staging environment. Do not assume deleting ordinary filesystem files securely erases their contents.
+If the software key was deleted before provisioning Spare, restore the **verified secret-key backup** in an **isolated trusted GnuPG home**, confirm `ssb` (not only `ssb>`), repeat `keytocard`, and remove/protect the temporary secret-key staging environment. Do not assume deleting ordinary filesystem files securely erases their contents.
 
-**Do not use \`gpg --card-edit -> generate\`** for this two-card/same-key workflow: on-card-generated private keys are non-exportable and cannot be cloned to another card.
+**Do not use `gpg --card-edit -> generate`** for this two-card/same-key workflow: on-card-generated private keys are non-exportable and cannot be cloned to another card.
 
 ## B. On EVERY Debian/Ubuntu host — use the existing cards
 
@@ -108,13 +108,14 @@ sudo apt install gnupg scdaemon pinentry-curses
 sudo apt install yubikey-manager
 gpg --import /path/to/public-key.asc
 gpg --fingerprint
+PRIMARY_FPR='REPLACE_WITH_EXISTING_PRIMARY_FINGERPRINT'
 gpg --card-status
 gpg --list-secret-keys --keyid-format LONG
 ~~~
 
-**Effects:** Package installation and **local GnuPG public-key/card-stub metadata**; no new private key or hardware key is generated. The public key fingerprint must be checked against a trusted record before use. An \`ssb>\` entry indicates an OpenPGP-card-backed secret-subkey reference; \`sec#\` indicates the primary software secret is unavailable here.
+**Effects:** Package installation and **local GnuPG public-key/card-stub metadata**; no new private key or hardware key is generated. The public key fingerprint must be checked against a trusted record before use. An `ssb>` entry indicates an OpenPGP-card-backed secret-subkey reference; `sec#` indicates the primary software secret is unavailable here.
 
-Insert Main or Spare to decrypt; use \`gpg --card-status\` after switching if GnuPG retains a stale card reference. The private encryption key remains on hardware.
+Insert Main or Spare to decrypt; use `gpg --card-status` after switching if GnuPG retains a stale card reference. The private encryption key remains on hardware.
 
 ### 6. Prove hardware-only decryption
 
@@ -130,7 +131,7 @@ printf 'hardware-only test\n' |
 GNUPGHOME="$TEST_HOME" gpg --decrypt /tmp/yubikey-test.gpg
 ~~~
 
-Expected plaintext: \`hardware-only test\`. **The isolated home imported only a public key**, so successful decryption proves card use rather than software-private-key fallback. The \`--trust-model always\` override is **only for this disposable test** after verifying the recipient fingerprint; do not use it as a global trust setting.
+Expected plaintext: `hardware-only test`. **The isolated home imported only a public key**, so successful decryption proves card use rather than software-private-key fallback. The `--trust-model always` override is **only for this disposable test** after verifying the recipient fingerprint; do not use it as a global trust setting.
 
 **Effects:** Temporary directory and disposable encrypted test file; card operation may change its transient PIN/touch verification state. No hardware credential installation. The temporary directory remains until explicitly removed; never put software private backups inside this test home.
 
@@ -138,7 +139,7 @@ Repeat decryption with **Main and Spare independently**.
 
 ### 7. Use an existing gopass vault
 
-If the vault's \`.gpg-id\` / recipient configuration already targets **this same OpenPGP encryption identity**, no GnuPG software private-key import or new \`gopass init\` is necessary:
+If the vault's `.gpg-id` / recipient configuration already targets **this same OpenPGP encryption identity**, no GnuPG software private-key import or new `gopass init` is necessary:
 
 ~~~bash
 # Install gopass using your distro package or the official gopass release.
@@ -149,15 +150,15 @@ gopass NAME_OF_EXISTING_SECRET
 
 **Effects:** Normally reads/decrypts the requested entry (some gopass commands copy it into clipboard). It **does not migrate recipients**. If the vault uses an **older/different GPG recipient**, do not delete its recovery keys: plan and verify an additive recipient migration first.
 
-For a fresh, empty vault only, initialize it with the verified public key using \`gopass init "$PRIMARY_FPR"\`; **do not run init against an existing store** without understanding its effects.
+For a fresh, empty vault only, initialize it with the verified public key using `gopass init "$PRIMARY_FPR"`; **do not run init against an existing store** without understanding its effects.
 
 **Observed 2026-11-24:** Main and Spare each decrypted a GPG test message, and an existing gopass secret was decrypted with a hardware-touch terminal notification. The user's last gopass secret test was not independently attributed to both cards.
 
 ## Recovery and troubleshooting
 
-- **Wrong card / No secret key:** Import the right public key, insert a card containing the **matching encryption subkey**, and refresh with \`gpg --card-status\`. Do not generate a new key to fix a card mismatch.
+- **Wrong card / No secret key:** Import the right public key, insert a card containing the **matching encryption subkey**, and refresh with `gpg --card-status`. Do not generate a new key to fix a card mismatch.
 - **PIN prompt:** The OpenPGP User PIN is distinct from the removed software-key passphrase. Do not repeatedly guess PINs; retries are limited.
-- **No touch notification:** Wait beyond the card's touch cache and check [Touch-key notifications](TOUCH-NOTIFICATIONS.md); an isolated \`GNUPGHOME\` can use a different agent socket than the detector.
+- **No touch notification:** Wait beyond the card's touch cache and check [Touch-key notifications](TOUCH-NOTIFICATIONS.md); an isolated `GNUPGHOME` can use a different agent socket than the detector.
 - **Lost both cards:** Recovery requires the previously protected **secret-key backup** and independent restore verification. A public-key-only export cannot recover private decryption.
 - **No sudo service changes:** This guide does **not** enable FIDO2 sudo, SSH authentication, LUKS disk unlock, or passkeys. Those use separate applications/protocols.
 
