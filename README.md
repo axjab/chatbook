@@ -24,6 +24,7 @@ A **public, human-friendly shared knowledge base** maintained from conversations
 - [Host Doctor](host-doctor/README.md) — local health checks and USB presence detection.
 - [YubiKey fundamentals](security/yubikey/yubikey-fundamentals.md) — OTP, FIDO2, credential discoverability, and hardware effects.
 - [YubiKey application capabilities — **UNREVIEWED**](security/yubikey/applications.md) — FIDO, OpenPGP, PIV, OATH, OTP, YubiHSM Auth; smartcards, certificates and practical use cases.
+- [Auth CLI engineering prompt](security/yubikey/auth-cli.md) — complete Claude handoff for watching OATH codes, safe account management, read-only FIDO/PGP views and configuration doctor.
 - [Registration inventory](security/yubikey/registrations.md) — reported enrollment, verification gaps, and recordkeeping.
 - [PAM fundamentals and experiments](security/pam/fundamentals.md) — PAM services, auth/account/password/session, module stacking, output, and an isolated lab.
 - [sudo and PAM](security/yubikey/sudo-pam.md) — touch-only sudo design, evidence, problems, and safeguards.

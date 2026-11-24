@@ -64,6 +64,9 @@ The owner chose a minimal, terminal-first **`auth` wrapper** around `ykman` (spe
 - `auth fido` lists **discoverable FIDO2 credentials only**; it cannot inventory non-discoverable website registrations.
 - `auth pgp` inspects OpenPGP key slots and available metadata.
 - The FIDO and PGP views are **strictly read-only**. No generic `ykman` passthrough or unnecessary features.
+- **New requirements:** `auth` watches TOTP codes in place without clearing the terminal; `auth doctor` performs a read-only comparison against the approved USB/NFC application matrix (FIDO2, OATH, OpenPGP enabled; OTP, U2F, PIV, YubiHSM Auth disabled).
+
+**Full implementation handoff:** [Auth CLI engineering prompt](auth-cli.md).
 
 **Resume:** Implement/test `auth` using the session's Claude engineering prompt and `ykman` CLI reference; then enroll and verify OATH on both keys. Keep the public notebook free of TOTP secrets, PINs, recovery codes, and private registration details.
 
