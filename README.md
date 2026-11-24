@@ -23,7 +23,8 @@ A **public, human-friendly shared knowledge base** maintained from conversations
 - [sudo and PAM](security/yubikey/sudo-pam.md) — touch-only sudo design, evidence, problems, and safeguards.
 - [sudo task checklist and handoff](security/yubikey/sudo-pam.todo.md) — verified/reported progress and the exact next-session actions.
 - [Hardware-backed SSH](security/yubikey/ssh.md) — design alternatives and next decisions.
-- [GPG and gopass — **UNREVIEWED update**](security/yubikey/gpg-gopass.md) — newly created key, backup limitations, recovery requirements, and paused deployment.
+- [GPG and gopass](security/yubikey/gpg-gopass.md) — verified card-backed decryption, PIN/touch policy, and remaining store migration and recovery steps.
+- [YubiKey touch notifications](security/yubikey/touch-notifications.md) — observed GPG touch events, terminal notifications, Unix socket command hooks and pending systemd deployment.
 - [Passwordless web applications](security/yubikey/web-sso.md) — Pocket ID and downstream integration.
 - [Script authentication](security/yubikey/script-auth.md) — the experimental challenge-response idea.
 - [Disk encryption and FIDO2](security/yubikey/luks-fido2.md) — LUKS2 enrollment prerequisites and recovery.
