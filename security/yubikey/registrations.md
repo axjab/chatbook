@@ -19,7 +19,7 @@ There are **two physical keys**, labeled **Main** and **Spare**. Each has a sepa
 | Tailscale | Enrollment reported | Enrollment reported | A discoverable Tailscale passkey observed on an inserted key; both not independently verified |
 | GitHub | Registration reported | Not verified | Do not assume both registered |
 | Pocket ID | Localhost passkey test worked | Not verified | Production access not established |
-| sudo / pam-u2f | **Discoverable credential listed; touch-based sudo reported working** | **Not yet registered for sudo** | Main output seen; no exhaustive negative-test record |
+| sudo / pam-u2f | **Owner reports sudo/FIDO completed** | **Status not independently documented** | Earlier Main enrollment was observed; do not infer Spare enrollment or complete regression testing without records |
 | SSH | Pending | Pending | Design not selected |
 | OpenPGP / gopass | Pending | Pending | Existing software key needs inspection |
 | Custom script challenge | Pending | Pending | Experimental only |
@@ -45,4 +45,4 @@ The complete inventory stays private and is maintained manually. Building a gene
 
 ## Next action
 
-Finish recording Main sudo test outcomes and recovery, then enroll and test Spare independently. See [sudo handoff](sudo-pam.todo.md). For all other services, verify Main and Spare **separately**, distinguishing enrollment from actual successful authentication.
+Owner considers sudo/FIDO complete; defer any further sudo changes unless requested. For other services, verify Main and Spare **separately**, distinguishing enrollment from actual successful authentication. The active next-session tasks are in [the integration checkpoint](integration.todo.md).
