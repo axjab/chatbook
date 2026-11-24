@@ -37,6 +37,38 @@ A multi-protocol YubiKey is a miniature cryptographic computer. Its *application
 
 Firmware and model matter. As documented for YubiKey 5 Series, firmware 5.7+ offers up to 100 discoverable FIDO2 credentials and 64 OATH credentials; older versions commonly support 25 and 32 respectively. FIDO also supports many non-discoverable registrations that do not occupy the discoverable inventory. Not every YubiKey model supports the listed applications.
 
+## Application audit — 2026-11-24 (owner-reported)
+
+The YubiKey 5 application list has **seven entries**: Yubico OTP, FIDO U2F, FIDO2, OATH, PIV, OpenPGP, and YubiHSM Auth. U2F and FIDO2 appear separately in device configuration, although both belong to the FIDO family.
+
+| Application | Decision / observed status |
+| --- | --- |
+| Yubico OTP | Disabled; no confirmed relying service |
+| FIDO U2F | Disabled; sudo, Tailscale, GitHub, Fastmail and Bitwarden were tested successfully afterward |
+| FIDO2 | Retained; used for passwordless authentication |
+| OATH | Retained; next area of work |
+| PIV | Disabled; no current certificate/PKCS#11 use case |
+| OpenPGP | Retained; used for GPG decryption |
+| YubiHSM Auth | Disabled; no YubiHSM 2 use case |
+
+**Lesson:** FIDO2 does not require the legacy U2F application to be enabled, but existing U2F-only registrations could still depend on it. The five successful login tests validate those workflows, not every possible registration. Application disablement is reversible and does not itself erase credentials. **Check Main and Spare independently**; the full seven-application state was not independently verified on both keys.
+
+### OATH and the proposed `auth` CLI
+
+OATH stores TOTP/HOTP secrets on the YubiKey; a client such as `ykman` generates codes. Unlike FIDO2, TOTP codes are phishable. No completed Government of Canada OATH enrollment was verified in this session.
+
+The owner chose a minimal, terminal-first **`auth` wrapper** around `ykman` (specification written; **not implemented**):
+
+- `auth` shows OATH codes by default; `auth <query>` selects one; `auth ls` lists accounts.
+- `auth add`, `auth rename`, `auth rm` manage OATH credentials with clear feedback and safe secret input. **Do not enable `--touch` when adding.**
+- `auth fido` lists **discoverable FIDO2 credentials only**; it cannot inventory non-discoverable website registrations.
+- `auth pgp` inspects OpenPGP key slots and available metadata.
+- The FIDO and PGP views are **strictly read-only**. No generic `ykman` passthrough or unnecessary features.
+
+**Resume:** Implement/test `auth` using the session's Claude engineering prompt and `ykman` CLI reference; then enroll and verify OATH on both keys. Keep the public notebook free of TOTP secrets, PINs, recovery codes, and private registration details.
+
+Reference: [YubiKey Manager OATH commands](https://docs.yubico.com/software/yubikey/tools/ykman/OATH_Commands.html).
+
 ## PIV is keys + certificates + data objects
 
 **PIV** means *Personal Identity Verification*. It implements the smartcard credential system commonly used by operating systems and organizations. A normal PIV key is generated or imported into a numbered slot; an X.509 certificate links its public key to an identity trusted by the client.
