@@ -11,9 +11,9 @@ updated: 2026-11-26
 
 ## CURRENT — IN PROGRESS
 
-- [ ] **Deploy Forgejo on Majula** (owner undertaking setup; not yet verified).
-  - [ ] Choose installation method and persistent data location.
-  - [ ] Confirm SSH/HTTPS access without breaking existing services.
+- [ ] **Verify Forgejo on Majula** (owner reports web service live at `https://git.alj.cx`; independent checks pending).
+  - [x] Bring up Forgejo behind Caddy at `https://git.alj.cx` (owner-reported).
+  - [ ] Verify HTTPS API response and SSH connectivity, then native Git clone/push.
   - [ ] Verify native `git clone`, branch push, and Forgejo pull-request workflow.
   - [ ] Configure restricted credentials/permissions and backups; test restoration.
 
@@ -34,4 +34,4 @@ updated: 2026-11-26
 
 ## Handoff
 
-No Forgejo deployment, agent runtime, remote integration or new server is verified complete by this record. Owner is setting up Forgejo now; request verification output before marking complete. No secrets or private host access details belong in this public notebook.
+Forgejo web deployment at `https://git.alj.cx` is owner-reported live; API, SSH, Git operations, persistence and backup remain unverified. No agent runtime or remote integration is deployed. Do not publish credentials or private host details. No secrets or private host access details belong in this public notebook.
