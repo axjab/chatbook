@@ -11,11 +11,11 @@ updated: 2026-11-26
 
 ## CURRENT
 
-- [ ] **Enable agent access to self-hosted infrastructure.** Determine supported ChatGPT and external-agent integrations for Forgejo at `git.alj.cx`, including Git, API, SSH and MCP where applicable.
+- [ ] **Deploy SFTPGo on Majula** for confined private and shared agent file storage, with no shell access.
 
 ## NEXT
 
-- [ ] Provision a secure, reusable file-access interface for agents; use existing SSH/SFTP if sufficient.
+- [ ] Enable agent access to self-hosted infrastructure (Forgejo and SFTPGo) through supported integrations and restricted credentials.
 - [ ] Select an isolated agent runtime and execution host.
 - [ ] Run a supervised agent workflow against a test repository.
 - [ ] Begin structured AI/LLM/agent lessons and experiments.
@@ -26,4 +26,4 @@ updated: 2026-11-26
 
 ## Notes
 
-Keep tasks at milestone level, not installation/verification microsteps. Agent hosting remains undecided. This public notebook must not contain credentials or private network details.
+SFTPGo selected for SFTP, WebDAV and HTTP-based file access, per-agent private storage and explicitly shared directories, with quotas and permissions. Forgejo remains the version-controlled source of truth for code and documentation. Keep tasks at milestone level, not installation/verification microsteps. Agent hosting remains undecided. This public notebook must not contain credentials or private network details.
