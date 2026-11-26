@@ -53,6 +53,16 @@ Every topic follows **concept → architecture → experiment → verification �
 - **Unknown / to verify:** Which ChatGPT integration paths can reach a self-hosted MCP endpoint or self-hosted Git server in the user's actual product environment. Never promise that simply hosting MCP creates ChatGPT connectivity.
 - Do not put secrets, exact private network details, credentials, or live security configurations in this public notebook.
 
+## Agent lifecycle — verified conceptual foundations (2026-11-26)
+
+An agent is application software implementing a task loop with a model and tools, not merely a browser client. Depending on the harness, it can run interactively in a terminal, as a one-shot background job, a scheduled worker, or a persistent service. The model selects requested operations; harness/tool implementations actually perform file, shell, Git and network actions with their configured permissions.
+
+A typical coding sequence is task → model decision → tool call → permission check → read/edit/run test → observe result → repeat → commit/report. **The agent is not inherently authorized to use SSH**: the harness must offer an appropriate tool and the environment must have network access and limited credentials.
+
+**What persists is configuration-dependent:** model parameters are separate from a session; process state typically ends when stopped; conversation history may be saved by harness; filesystem changes persist on persistent storage, but disappear with disposable storage; Git commits remain in repository history; external memory needs explicit storage/retrieval. Host selection does not by itself determine memory location. Sandboxes reduce risk, but separation of credentials and restricted tool privileges remain necessary.
+
+**Infrastructure implication:** start with an interactive agent and isolated, reusable workspace; do not require a persistent daemon. Keep model provider, harness, workspace and persistent data conceptually separate. Avoid a host decision until the same test is compared on local/VPS/hybrid. Source references: [OpenAI sandbox architecture](https://developers.openai.com/api/docs/guides/agents/sandboxes), [OpenAI agents architecture](https://developers.openai.com/api/docs/guides/agents-api/overview), [MCP client/server fundamentals](https://py.sdk.modelcontextprotocol.io/get-started/first-steps/).
+
 ## Session handoff
 
 As of 2026-11-26, no agent host, integration, deployment, credential, or sandbox has been provisioned for this project. The next task is **agent fundamentals and an access-path comparison**, before any installation. See [next steps](ai-mastery.todo.md).
