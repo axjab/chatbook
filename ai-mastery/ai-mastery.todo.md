@@ -1,6 +1,6 @@
 ---
 title: AI mastery tasks
-description: "Current infrastructure work, next actions, and deferred learning"
+description: "Current and upcoming project milestones"
 type: todo
 tags: [ai, infrastructure, tasks]
 created: 2026-11-26
@@ -9,29 +9,21 @@ updated: 2026-11-26
 
 # AI mastery tasks
 
-## CURRENT — IN PROGRESS
+## CURRENT
 
-- [ ] **Verify Forgejo on Majula** (owner reports web service live at `https://git.alj.cx`; independent checks pending).
-  - [x] Bring up Forgejo behind Caddy at `https://git.alj.cx` (owner-reported).
-  - [ ] Verify HTTPS API response and SSH connectivity, then native Git clone/push.
-  - [ ] Verify native `git clone`, branch push, and Forgejo pull-request workflow.
-  - [ ] Configure restricted credentials/permissions and backups; test restoration.
-
-**Host choice:** Majula selected after resource inspection (4 logical CPUs, 3.4 GiB available RAM, 87 GB free root, 2.6 TB free SSD). Plan for one instance hosting many repositories; no CI runners at first. Agent hosting remains undecided.
+- [ ] **Enable agent access to self-hosted infrastructure.** Determine supported ChatGPT and external-agent integrations for Forgejo at `git.alj.cx`, including Git, API, SSH and MCP where applicable.
 
 ## NEXT
 
-- [ ] Decide whether OpenSSH SFTP is sufficient for shared files; justify SFTPGo only if additional management features are needed.
-- [ ] Verify real integration options for ChatGPT and external agents with self-hosted Git/files and MCP.
-- [ ] Design one isolated test workspace with minimal credentials and observable access.
-- [ ] Compare local, VPS, and hybrid agent execution after infrastructure access requirements are known.
+- [ ] Provision a secure, reusable file-access interface for agents; use existing SSH/SFTP if sufficient.
+- [ ] Select an isolated agent runtime and execution host.
+- [ ] Run a supervised agent workflow against a test repository.
+- [ ] Begin structured AI/LLM/agent lessons and experiments.
 
-## LATER
+## DONE
 
-- [ ] Build/test a supervised coding-agent workflow against a non-sensitive test repository.
-- [ ] Develop the AI/LLM/agent curriculum; use Hugging Face and other resources.
-- [ ] Revisit the temporary project name when a better one emerges.
+- [x] Deploy Forgejo on Majula (`git.alj.cx`).
 
-## Handoff
+## Notes
 
-Forgejo web deployment at `https://git.alj.cx` is owner-reported live; API, SSH, Git operations, persistence and backup remain unverified. No agent runtime or remote integration is deployed. Do not publish credentials or private host details. No secrets or private host access details belong in this public notebook.
+Keep tasks at milestone level, not installation/verification microsteps. Agent hosting remains undecided. This public notebook must not contain credentials or private network details.
