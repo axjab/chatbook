@@ -4,7 +4,7 @@ description: "Index of the public conversational knowledge base"
 type: note
 tags: [chatbook, index]
 created: 2026-11-22
-updated: 2026-11-24
+updated: 2026-11-26
 ---
 
 # Chatbook
@@ -20,6 +20,9 @@ A **public, human-friendly shared knowledge base** maintained from conversations
 - [Touch-key notifications](TOUCH-NOTIFICATIONS.md) — deploy one systemd user service for GPG/FIDO touch prompts in desktop and terminal sessions.
 
 ## Browse by subject
+
+- [AI mastery and agent infrastructure](ai-mastery/overview.md) — objectives, agent fundamentals, hosting and memory considerations, and the proposed curriculum.
+- [AI mastery next steps](ai-mastery/ai-mastery.todo.md) — prioritized infrastructure decisions and experiment checklist.
 
 - [Host Doctor](host-doctor/README.md) — local health checks and USB presence detection.
 - [YubiKey fundamentals](security/yubikey/yubikey-fundamentals.md) — OTP, FIDO2, credential discoverability, and hardware effects.
