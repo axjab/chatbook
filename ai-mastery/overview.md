@@ -1,68 +1,50 @@
 ---
-title: AI mastery and agent infrastructure
-description: "Objectives, concepts, decisions, and handoff for learning AI while building a provider-independent agent environment"
+title: AI mastery
+description: "Project objectives, infrastructure choices, and resumption context"
 type: note
-tags: [ai, agents, infrastructure, learning]
+tags: [ai, agents, infrastructure]
 created: 2026-11-26
 updated: 2026-11-26
 ---
 
-# AI mastery and agent infrastructure
+# AI mastery
 
-## Status and naming
+**Name:** AI mastery (temporary). Kindred is another provisional candidate; propose a better name if one emerges.
 
-- **Decided:** Current working project name is **AI mastery**. **Kindred** is also provisional, not an approved permanent name.
-- **Decided:** Bring a demonstrably better project name to the owner's attention whenever one arises; do not silently rename the project.
-- **Decided:** Prioritize agent tooling and integration before the full curriculum.
-- **Pending:** The location of agent execution (VPS, local workstation, hybrid) is undecided; first understand effects on memory, access, and security.
-- **Reported:** The owner has primarily used browser chat with GitHub connectivity and wants access to self-hosted Git and file servers.
+## Goal
 
-## Ambition and success criteria
+Learn AI, LLMs, models, agents, tools, MCP, harnesses and adjacent technologies through hands-on work. Eventually understand, deploy and modify unfamiliar AI projects, including those found on [Trendshift](https://trendshift.io).
 
-Build broad practical mastery of LLMs, AI models, inference, training, agents, tools, harnesses, MCP, memory, RAG, evaluation, safety, and related technologies. Learn to inspect, install, run, evaluate, and modify unfamiliar trending AI repositories (Trendshift is a discovery source; repository examples are not a fixed syllabus).
+**Priority:** Build self-hosted infrastructure that future agents can use **before** launching agents or following the broader AI curriculum.
 
-Literal knowledge of *all* AI is not a finite milestone. Practical mastery means independent comprehension, reproducible experiments, debugging, and responsible deployment of previously unfamiliar systems.
+## Current decision — Forgejo on Majula
 
-## Core distinctions
+**Selected:** Majula, the existing home server, for initial Forgejo deployment. **CURRENT / IN PROGRESS (owner installing)**. This is not yet a verified installation.
 
-- **Model:** Supplies token predictions/reasoning capabilities; does not by itself operate SSH or a filesystem.
-- **Agent:** Software process or workflow that uses a model, tools, and an execution loop to work toward goals. An agent may be interactive, a background job, a scheduled task, or a persistent service.
-- **Harness/runtime:** Software supplying model calls, tool implementations, context handling, permission gates, execution and lifecycle management.
-- **MCP:** An interoperability protocol for exposing tools/resources to compatible clients; running a server does not automatically give every chat client access to it.
-- **Memory:** Distinguish model parameters (training-derived knowledge), session context (supplied messages), and external persistent storage (files/databases). Agents can run on one machine and use persistent memory hosted elsewhere.
-- **Security boundary:** Runtime isolation, tool scope, credentials, network reachability, and approval rules all matter. Do not equate access to a repository with unrestricted access to its host.
+Reported capacity snapshot (2026-11-26):
+- Intel Core i5-4590T, 4 logical CPUs; load average ~0.27.
+- 7.7 GiB RAM; 3.4 GiB available; ~989 MiB swap used.
+- 87 GB free on root filesystem; 2.6 TB free on separate SSD mount.
+- Sufficient for an initial personal Forgejo service with modest activity and no CI runners.
 
-## Proposed learning roadmap
+Other hosts: Old Firelink Shrine is a deprecated VPS; replacement Firelink Shrine is planned; a dedicated agent VPS is a possible later project. No new VPS is required for initial Git hosting.
 
-0. Agent infrastructure: isolated workspace, SSH/Git/filesystem tools, scoped credentials, self-hosted integrations.
-1. AI basics: machine learning, neural networks, tokens, embeddings, transformers, LLM limits.
-2. Models and inference: architectures, local vs hosted, quantization, context, compute, evaluation.
-3. Agents: tool calls, loops, MCP, skills, context and memory, approvals.
-4. Agent engineering: orchestration, sandboxes, multi-agent patterns, logging, recovery and testing.
-5. Advanced topics: RAG, vector stores, fine-tuning, multimodal, reinforcement learning, evaluations.
-6. Repository literacy: independently evaluate and operate unfamiliar AI projects from Trendshift and other sources.
+Use **one Forgejo instance** for multiple repositories, not one instance per repository. Preserve native Git over SSH for the owner and controlled access for agents; Forgejo's managed bare-repository storage should not be edited externally. Avoid unnecessarily duplicating Forgejo with SFTPGo; OpenSSH already supports SFTP. Agent execution host remains **undecided** and independent of Forgejo hosting.
 
-Every topic follows **concept → architecture → experiment → verification → documentation**. Phases can overlap.
+## Principles and distinctions
 
-## Initial infrastructure hypothesis — NOT a deployment decision
+- An **agent** is software that uses a model, a harness/loop and tools. It can run interactively or in the background.
+- A **workspace** holds working files; **persistent memory** is separately implemented storage, not automatically inherent to an agent.
+- **MCP** allows compatible clients to interact with exposed tools; merely running an MCP server does not automatically connect ChatGPT.
+- Aim for provider-independent, least-privilege access to Git, files and other services; isolate future agent execution from trusted infrastructure.
+- Keep credentials, sensitive host specifics and private network details out of this public Chatbook.
 
-- Existing interest: Debian, native SSH, self-hosted Forgejo, filesystem services, and controlled remote access.
-- Prefer a provider-independent tool surface to avoid locking all workflows to one hosted model or agent vendor.
-- Candidate execution: isolated containers with least-privilege, per-agent credentials and a test repository.
-- First proof: an agent can clone a dedicated non-sensitive repository, edit a file, run tests, push a branch, and open a pull request, all with traceable permissions and observable actions.
-- **Unknown / to verify:** Which ChatGPT integration paths can reach a self-hosted MCP endpoint or self-hosted Git server in the user's actual product environment. Never promise that simply hosting MCP creates ChatGPT connectivity.
-- Do not put secrets, exact private network details, credentials, or live security configurations in this public notebook.
+## Roadmap
 
-## Agent lifecycle — verified conceptual foundations (2026-11-26)
+1. **Now:** Forgejo on Majula; verify storage, access controls, native Git over SSH, and backup/recovery.
+2. Evaluate whether basic SFTP suffices for file sharing, and what additional service is actually needed.
+3. Verify available ChatGPT/other-agent connection paths to self-hosted services.
+4. Choose agent runtime and execution location; implement a small isolated test workspace with narrow credentials.
+5. Begin structured AI learning and increasingly sophisticated real-world experiments.
 
-An agent is application software implementing a task loop with a model and tools, not merely a browser client. Depending on the harness, it can run interactively in a terminal, as a one-shot background job, a scheduled worker, or a persistent service. The model selects requested operations; harness/tool implementations actually perform file, shell, Git and network actions with their configured permissions.
-
-A typical coding sequence is task → model decision → tool call → permission check → read/edit/run test → observe result → repeat → commit/report. **The agent is not inherently authorized to use SSH**: the harness must offer an appropriate tool and the environment must have network access and limited credentials.
-
-**What persists is configuration-dependent:** model parameters are separate from a session; process state typically ends when stopped; conversation history may be saved by harness; filesystem changes persist on persistent storage, but disappear with disposable storage; Git commits remain in repository history; external memory needs explicit storage/retrieval. Host selection does not by itself determine memory location. Sandboxes reduce risk, but separation of credentials and restricted tool privileges remain necessary.
-
-**Infrastructure implication:** start with an interactive agent and isolated, reusable workspace; do not require a persistent daemon. Keep model provider, harness, workspace and persistent data conceptually separate. Avoid a host decision until the same test is compared on local/VPS/hybrid. Source references: [OpenAI sandbox architecture](https://developers.openai.com/api/docs/guides/agents/sandboxes), [OpenAI agents architecture](https://developers.openai.com/api/docs/guides/agents-api/overview), [MCP client/server fundamentals](https://py.sdk.modelcontextprotocol.io/get-started/first-steps/).
-
-## Session handoff
-
-As of 2026-11-26, no agent host, integration, deployment, credential, or sandbox has been provisioned for this project. The next task is **agent fundamentals and an access-path comparison**, before any installation. See [next steps](ai-mastery.todo.md).
+Resume from [current tasks](ai-mastery.todo.md).
