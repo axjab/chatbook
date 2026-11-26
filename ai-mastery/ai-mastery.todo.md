@@ -11,7 +11,7 @@ updated: 2026-11-26
 
 ## Immediate
 
-- [ ] **1. Explain agent lifecycle and boundaries:** interactive process vs background job vs daemon; distinguish model, agent, harness, tool, MCP client/server, context, and persistent memory. Use concrete examples and avoid vendor-specific assumptions.
+- [x] **1. Explain agent lifecycle and boundaries:** interactive process vs background job vs daemon; distinguish model, agent, harness, tool, MCP client/server, context, and persistent memory. Use concrete examples and avoid vendor-specific assumptions.
 - [ ] **2. Map the connectivity options:** differentiate ChatGPT's connected apps, external coding agents, SSH/Git tools, MCP, and self-hosted remote services. Verify available product capabilities and their limitations before choosing a solution.
 - [ ] **3. Define one minimal experiment:** a non-sensitive test repository, allowed operations (read, edit, test, push branch, PR), observable logs, explicit approvals, and cleanup. Identify the exact agent software and how it receives credentials.
 - [ ] **4. Compare execution locations** (local workstation, VPS, hybrid) for isolation, availability, memory persistence, host reachability, backups, cost, and recovery. Do not pick yet.
