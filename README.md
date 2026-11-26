@@ -23,6 +23,7 @@ A **public, human-friendly shared knowledge base** maintained from conversations
 
 - [AI mastery and agent infrastructure](ai-mastery/overview.md) — objectives, agent fundamentals, hosting and memory considerations, and the proposed curriculum.
 - [AI mastery next steps](ai-mastery/ai-mastery.todo.md) — prioritized infrastructure decisions and experiment checklist.
+- [SFTPGo 2.7 Getting Started](ai-mastery/sftpgo-getting-started.md) — comprehensive notes on user accounts, permissions, virtual folders, groups, storage backends and optional protocols.
 
 - [Host Doctor](host-doctor/README.md) — local health checks and USB presence detection.
 - [YubiKey fundamentals](security/yubikey/yubikey-fundamentals.md) — OTP, FIDO2, credential discoverability, and hardware effects.
