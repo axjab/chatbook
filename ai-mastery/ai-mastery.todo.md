@@ -1,35 +1,37 @@
 ---
-title: AI mastery next steps
-description: "Prioritized verified-next-action checklist for agent infrastructure and AI learning"
+title: AI mastery tasks
+description: "Current infrastructure work, next actions, and deferred learning"
 type: todo
-tags: [ai, agents, infrastructure, checklist]
+tags: [ai, infrastructure, tasks]
 created: 2026-11-26
 updated: 2026-11-26
 ---
 
-# AI mastery — next steps
+# AI mastery tasks
 
-## Immediate
+## CURRENT — IN PROGRESS
 
-- [x] **1. Explain agent lifecycle and boundaries:** interactive process vs background job vs daemon; distinguish model, agent, harness, tool, MCP client/server, context, and persistent memory. Use concrete examples and avoid vendor-specific assumptions.
-- [ ] **2. Map the connectivity options:** differentiate ChatGPT's connected apps, external coding agents, SSH/Git tools, MCP, and self-hosted remote services. Verify available product capabilities and their limitations before choosing a solution.
-- [ ] **3. Define one minimal experiment:** a non-sensitive test repository, allowed operations (read, edit, test, push branch, PR), observable logs, explicit approvals, and cleanup. Identify the exact agent software and how it receives credentials.
-- [ ] **4. Compare execution locations** (local workstation, VPS, hybrid) for isolation, availability, memory persistence, host reachability, backups, cost, and recovery. Do not pick yet.
-- [ ] **5. Select a small initial runtime/tool stack** after comparison, including authentication and access restrictions.
-- [ ] **6. Execute and verify** the test-repository end-to-end workflow, one persistent/reversible change at a time.
+- [ ] **Deploy Forgejo on Majula** (owner undertaking setup; not yet verified).
+  - [ ] Choose installation method and persistent data location.
+  - [ ] Confirm SSH/HTTPS access without breaking existing services.
+  - [ ] Verify native `git clone`, branch push, and Forgejo pull-request workflow.
+  - [ ] Configure restricted credentials/permissions and backups; test restoration.
 
-## Subsequent
+**Host choice:** Majula selected after resource inspection (4 logical CPUs, 3.4 GiB available RAM, 87 GB free root, 2.6 TB free SSD). Plan for one instance hosting many repositories; no CI runners at first. Agent hosting remains undecided.
 
-- [ ] Expand access from Git to a narrow, non-sensitive filesystem test.
-- [ ] Document how memory/context is persisted, inspected, limited, and reset.
-- [ ] Start structured AI foundations lessons, maintaining demonstrations and evaluation criteria.
-- [ ] Periodically reassess the provisional project name; propose alternatives only when clearly better.
+## NEXT
 
-## Operating constraints
+- [ ] Decide whether OpenSSH SFTP is sufficient for shared files; justify SFTPGo only if additional management features are needed.
+- [ ] Verify real integration options for ChatGPT and external agents with self-hosted Git/files and MCP.
+- [ ] Design one isolated test workspace with minimal credentials and observable access.
+- [ ] Compare local, VPS, and hybrid agent execution after infrastructure access requirements are known.
 
-- Priority is the very next actionable step, not large speculative deployments.
-- Before commands that modify files, services, credentials or host settings, explain effects, persistence, verification and rollback.
-- Start with least privilege; no unrestricted trusted-host or production-repository access.
-- Mark reported, proposed and verified outcomes distinctly.
-- Chatbook is public: publish general patterns and safe examples, not private infrastructure information.
-- Existing standing authorization permits routine public-note commits directly to `master`; notify the owner after each successful push.
+## LATER
+
+- [ ] Build/test a supervised coding-agent workflow against a non-sensitive test repository.
+- [ ] Develop the AI/LLM/agent curriculum; use Hugging Face and other resources.
+- [ ] Revisit the temporary project name when a better one emerges.
+
+## Handoff
+
+No Forgejo deployment, agent runtime, remote integration or new server is verified complete by this record. Owner is setting up Forgejo now; request verification output before marking complete. No secrets or private host access details belong in this public notebook.
